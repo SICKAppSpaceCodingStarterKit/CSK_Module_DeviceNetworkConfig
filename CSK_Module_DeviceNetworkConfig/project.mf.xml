@@ -95,6 +95,10 @@ See following descriptions of events/functions regarding further information.
                     <desc>Notify details of executed ping command.</desc>
                     <param desc="Ping details." multiplicity="1" name="details" type="string"/>
                 </event>
+                <event name="OnNewDnsServer">
+                    <trait>released</trait>
+                    <param desc="" multiplicity="1" name="dnsServerList" type="string"/>
+                </event>
                 <function name="pageCalled">
                     <desc>Function to register "OnResume" of the module UI (only as helper function).</desc>
                     <return desc="Empty string (only needed to simplify binding)." multiplicity="1" name="empty" type="string"/>
@@ -143,6 +147,24 @@ See following descriptions of events/functions regarding further information.
                 <function name="setPingIPAddress">
                     <desc>Preset IP to ping (see 'ping' function).</desc>
                     <param desc="IP" multiplicity="1" name="ping_ip" type="string"/>
+                </function>
+                <function name="selectedDnsServer">
+                    <trait>released</trait>
+                    <param desc="" multiplicity="1" name="selectedRow" type="string"/>
+                </function>
+                <function name="setDnsServer">
+                    <trait>released</trait>
+                    <param desc="" multiplicity="1" name="dnsServer" type="string"/>
+                </function>
+                <function name="addDnsServer">
+                    <trait>released</trait>
+                </function>
+                <function name="removeDnsServer">
+                    <trait>released</trait>
+                </function>
+                <function name="getDnsServer">
+                    <trait>released</trait>
+                    <return desc="" multiplicity="1" name="dnsIp" type="string"/>
                 </function>
             </serves>
         </crown>

@@ -21,6 +21,8 @@ local currentIP             = '-'
 local currentSubnet         = '-'
 local currentGateway        = '-'
 local currentDHCP           = false
+local dnsServerAdd -- DNS server that should be added
+local dnsServerRemove -- DNS server that should be removed
 
 local interfacesTable = {} -- table to hold available interfaces
 local jsonInterfaceListContent -- available interfaces as JSON
@@ -45,6 +47,7 @@ Script.serveEvent("CSK_DeviceNetworkConfig.OnSubnetError", "DeviceNetworkConfig_
 Script.serveEvent("CSK_DeviceNetworkConfig.OnGatewayError", "DeviceNetworkConfig_OnGatewayError")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnApplyButtonDisabled", "DeviceNetworkConfig_OnApplyButtonDisabled")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewInterfaceChoice", "DeviceNetworkConfig_OnNewInterfaceChoice")
+Script.serveEvent("CSK_DeviceNetworkConfig.OnNewDnsServer", "DeviceNetworkConfig_OnNewDnsServer")
 
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelOperatorActive", "DeviceNetworkConfig_OnUserLevelOperatorActive")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelMaintenanceActive", "DeviceNetworkConfig_OnUserLevelMaintenanceActive")
@@ -158,6 +161,72 @@ local function updateUserLevel()
   end
 end
 
+-- Get a list of all configured DNS servers
+local function getDnsServerList()
+  local l_dnsServerList = Ethernet.DNS.getNameservers()
+  local retValue = {}
+  for _,v in pairs(l_dnsServerList) do
+    table.insert(retValue, {dnsServer= v})
+  end
+
+  return retValue
+end
+
+-- Update configured DNS servers
+local function updateDnsServer(dnsServerList)
+  -- Set name server list
+  
+  
+  -- Check if already added
+  -- Check if duplicate entries available
+
+  -- Store permananently
+  local hash = {}
+  local res = {}
+  
+  for _,v in ipairs(dnsServerList) do
+     if (not hash[v]) then
+         res[#res+1] = v 
+         hash[v] = true
+     end
+  end
+  Ethernet.DNS.setNameservers(res)
+
+  -- Check if duplicate nameservers configured, this can happen when additional nameservers are added automatically via DHCP
+  local l_configuredDns = {}
+  local l_duplicateElements = false
+  
+  for _,v in pairs(getDnsServerList()) do
+    if l_configuredDns[v.dnsServer] == nil then
+      l_configuredDns[v.dnsServer] = 1
+    else
+      -- Duplicate DNS entry detected
+      l_configuredDns[v.dnsServer] = l_configuredDns[v.dnsServer] + 1
+      l_duplicateElements = true
+    end
+  end
+
+  -- Remove duplicated DNS
+  if l_duplicateElements then
+    local l_resolvedTable = {}
+    for ip,number in pairs(l_configuredDns) do
+      if number == 1 then
+        table.insert(l_resolvedTable, ip)
+      end
+    end
+
+    -- Set name server list again without duplicates added by DHCP
+
+    for k,v in pairs(l_resolvedTable) do
+      print(v)
+    end
+    Ethernet.DNS.setNameservers(l_resolvedTable)
+  end
+
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDnsServer", deviceNetworkConfig_Model.helperFuncs.json.encode(getDnsServerList()))
+end
+
+
 --- Function to send all relevant values to UI on resume
 local function handleOnExpiredTmrDeviceNetworkConfig()
 
@@ -175,6 +244,9 @@ local function handleOnExpiredTmrDeviceNetworkConfig()
   Script.notifyEvent("DeviceNetworkConfig_OnNewDefaultGateway", '-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceChoice",'-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
+
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDnsServer", deviceNetworkConfig_Model.helperFuncs.json.encode(getDnsServerList()))
+
   checkWhatToDisable()
 end
 Timer.register(tmrDeviceNetworkConfig, "OnExpired", handleOnExpiredTmrDeviceNetworkConfig)
@@ -187,6 +259,63 @@ local function pageCalled()
   return ''
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.pageCalled", pageCalled)
+
+-- Add new DNS server IP
+local function addDnsServer()
+  if dnsServerAdd ~= nil and dnsServerAdd ~= "" then
+    local l_dnsServers = {}
+    for _,v in pairs(getDnsServerList()) do
+      table.insert(l_dnsServers, v.dnsServer)
+    end
+    table.insert(l_dnsServers, dnsServerAdd)
+
+    updateDnsServer(l_dnsServers)
+  end
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.addDnsServer', addDnsServer)
+
+-- Set DNS server IP
+local function setDnsServer(dnsServer)
+  dnsServerAdd = dnsServer
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setDnsServer', setDnsServer)
+
+-- Remove selected DNS server
+local function removeDnsServer()
+  if dnsServerRemove ~= nil and dnsServerRemove ~= "" then
+    local l_dnsServers = {}
+    for _,v in pairs(getDnsServerList()) do
+      if v.dnsServer ~= dnsServerRemove then
+        table.insert(l_dnsServers, v.dnsServer)
+      end
+    end
+
+    updateDnsServer(l_dnsServers)
+  end
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.removeDnsServer', removeDnsServer)
+
+
+-- Selected DNS server row
+local function selectedDnsServer(selectedRow)
+  if selectedRow ~= "" then
+    local l_data = deviceNetworkConfig_Model.helperFuncs.json.decode(selectedRow)
+    for _,v in pairs(getDnsServerList()) do
+      if v.dnsServer == l_data.dnsServer then
+        dnsServerRemove = v.dnsServer
+        break
+      end
+    end
+  end
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.selectedDnsServer', selectedDnsServer)
+
+-- Get DNS text field content
+local function getDnsServer()
+
+ return dnsServerAdd
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.getDnsServer', getDnsServer)
 
 local function selectInterface(row_selected)
   Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
