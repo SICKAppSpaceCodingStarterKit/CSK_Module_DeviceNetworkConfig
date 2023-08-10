@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+## Release 2.1.0
+
+### Improvements
+- Possibility to configure nameservers via the UI
+
 ## Release 2.0.0
 
 ### Improvements
