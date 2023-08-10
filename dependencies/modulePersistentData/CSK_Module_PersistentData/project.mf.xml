@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<manifest>
+    <application name="CSK_Module_PersistentData">
+        <crown name="CSK_Module_PersistentData">
+            <desc>This is an automatically generated CROWN (description not necessary).</desc>
+        </crown>
+        <crown name="CSK_PersistentData">
+            <trait>released</trait>
+            <desc>Module to provide data storage functionality incl. complex data types like Images, EdgeMatcher etc. +
+{empty} +
+*Function scope :* +
+1) Possibility to save tables into persistent data. +
+1.1) Main DataSet with sub parameters of each available / configured module. +
+1.2) Will be handled internally as Container + table content. +
+1.3) Saves data as a binary file. +
+{empty} +
+2) This module will provide a (loaded) DataSet for other CSK modules. +
+2.1)  This DataSet can hold multiple ParameterSets by name. +
+2.1.1) Internally, this is one Container with multiple Sub-Containers. +
+2.2)  The module can provide SubContainer content to other modules, selected by its name. +
+{empty} +
+3) Other modules can define inside of the parameters, if they should load their parameters on app reboot. +
+{empty} +
+4) This module will notify a "CSK_PersistentData.OnInitialDataLoaded" event, so that other modules can register on that event to load their specific parameters as soon as they are available. +
+{empty} +
+*How to use:* +
+*Save* +
+1) Via "addParameter" it is possible to send (multiple times) data as a Container to this module and to store it with a specific parameter name. (e.g. "cameraSetup1"). +
+2) Via "setModuleParameterName" it can be defined, which parameter should be loaded for a specific module during app/device reboot and if this should be active. +
+3) Via "setPath" it can be defined, where to store the full parameter dataset (including all available module parameters). +
+4) Via "saveData" the module will save the parameter dataset within a file defined with "setPath". +
+{empty} +
+ *Load* +
+1) Try to load saved parameter dataset via "loadContent" out of file defined via "setPath". +
+1.1) Info: With app/device reboot, the module will try this automatically and will notify the event "OnInitialDataLoaded" if successful. +
+2) Other modules can now load their specific parameter via "getParameter". +</desc>
+            <serves>
+                <event name="OnNewDataPath">
+                    <desc>Notify path of parameter set.</desc>
+                    <param desc="Path of the parameters." multiplicity="1" name="parameterPath" type="string"/>
+                </event>
+                <event name="OnNewFeedbackStatus">
+                    <desc>Notify current module status.</desc>
+                    <param desc="Status of the module." multiplicity="1" name="status" type="string"/>
+                </event>
+                <event name="OnNewContent">
+                    <desc>Notify new content in parameter set.</desc>
+                    <param desc="List of content." multiplicity="1" name="list" type="string"/>
+                </event>
+                <event name="OnInitialDataLoaded">
+                    <desc>Notify that inital parameter set was loaded after app/device reboot.</desc>
+                </event>
+                <event name="OnNewDatasetList">
+                    <desc>Notify list of dataset entries.</desc>
+                    <param desc="List of entries." multiplicity="?" name="list" type="string"/>
+                </event>
+                <event name="OnNewParameterTableInfo">
+                    <desc>Notify table info of parameters. Used within the UI to show content.</desc>
+                    <param desc="Data content of selected dataset." multiplicity="1" name="content" type="string"/>
+                </event>
+                <event name="OnNewParameterSelection">
+                    <desc>Notify current parameter dataset selection. E.g. used within the UI to select what content to show.</desc>
+                    <param desc="Name of the parameter dataset." multiplicity="1" name="parameterName" type="string"/>
+                </event>
+                <event name="OnInstanceAmountAvailable">
+                    <desc>Notify if amount of instances are available.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewStatusTempFileAvailable">
+                    <desc>Notify if temporary uploaded parameter file is available.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnUserLevelOperatorActive">
+                    <desc>Status of Operator userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnUserLevelMaintenanceActive">
+                    <desc>Status of Maintenance userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnUserLevelServiceActive">
+                    <desc>Status of Service userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnUserLevelAdminActive">
+                    <desc>Status of Admin userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewUserManagementTrigger">
+                    <desc>Notify trigger to update UserManagement status.</desc>
+                </event>
+                <function name="saveData">
+                    <desc>Save current parameter set.</desc>
+                    <return desc="Success of saving parameters." multiplicity="1" name="success" type="bool"/>
+                </function>
+                <function name="loadContent">
+                    <desc>Load set of parameters out of path (see "setPath").</desc>
+                    <return desc="Success of loading parameter set." multiplicity="1" name="success" type="bool"/>
+                </function>
+                <function name="getParameter">
+                    <desc>Provide parameters of current persistent data by name.</desc>
+                    <param desc="identification name of the parameters to provide." multiplicity="1" name="name" type="string"/>
+                    <return alias="Container" desc="Parameters" multiplicity="?" name="dataContent" type="object"/>
+                </function>
+                <function name="addParameter">
+                    <desc>Add incoming parameters (from other CSK modules) to current persistent data.</desc>
+                    <param alias="Container" desc="Parameters to store" multiplicity="1" name="data" type="object"/>
+                    <param desc="identification name to store the parameters." multiplicity="1" name="name" type="string"/>
+                </function>
+                <function name="setPath">
+                    <desc>Set the path to load/save the parameter set.</desc>
+                    <param desc="Path of the parameter set." multiplicity="1" name="path" type="string"/>
+                </function>
+                <function name="getVersion">
+                    <desc>Get version of module.</desc>
+                    <return desc="Version of module." multiplicity="1" name="version" type="string"/>
+                </function>
+                <function name="pageCalled">
+                    <desc>Function to register "OnResume" of the module UI (only as helper function).</desc>
+                    <return desc="Empty string (only needed to simplify binding)." multiplicity="1" name="empty" type="string"/>
+                </function>
+                <function name="getParameterList">
+                    <desc>Provide list of available parameters.</desc>
+                    <return desc="List of identification names of the available parameters." multiplicity="1" name="list" type="string"/>
+                </function>
+                <function name="removeParameter">
+                    <desc>Delete parameter of current parameter set by identification name.</desc>
+                    <param desc="Identification name" multiplicity="1" name="name" type="string"/>
+                </function>
+                <function name="createNewDataSet">
+                    <desc>Create new CSK_PersistentData dataset.</desc>
+                </function>
+                <function name="setModuleParameterName">
+                    <desc>Set parameter name for a module.</desc>
+                    <param desc="Module to save the parameter name for." multiplicity="1" name="module" type="string"/>
+                    <param desc="Name of the parameter dataset." multiplicity="1" name="name" type="string"/>
+                    <param desc="Status if parameter should be loaded on device / app reboot." multiplicity="1" name="loadOnReboot" type="bool"/>
+                    <param desc="Number of instance (for multi modules only)." multiplicity="?" name="instance" type="string"/>
+                    <param desc="Amount of total available instances." multiplicity="?" name="totalInstances" type="int"/>
+                </function>
+                <function name="getModuleParameterName">
+                    <desc>Function to get parameter. Can be used by other modules to receive their parameters.</desc>
+                    <param desc="Module to get name of parameters dataset to use." multiplicity="1" name="module" type="string"/>
+                    <param desc="Number of instance (for multi modules only)." multiplicity="?" name="instance" type="string"/>
+                    <return desc="Name of the dataset to use." multiplicity="?" name="name" type="string"/>
+                    <return desc="Status if parameter should be loaded on device / app reboot." multiplicity="?" name="loadOnReboot" type="bool"/>
+                    <return desc="Number of amount of available instances." multiplicity="?" name="totalInstances" type="int"/>
+                </function>
+                <function name="setSelectedParameterName">
+                    <desc>Select dataset to list its parameters.</desc>
+                    <param desc="Parameter dataset to list" multiplicity="?" name="selection" type="string"/>
+                </function>
+                <function name="removeParameterViaUI">
+                    <desc>Remove selected parameter dataset via UI.</desc>
+                </function>
+                <function name="overwriteData">
+                    <desc>Function to overwrite current parameters by uploaded parameters.</desc>
+                </function>
+                <function name="fileUploadFinished">
+                    <desc>Check if upload transfer was succesfull.</desc>
+                    <param desc="Status of file transfer" multiplicity="1" name="status" type="bool"/>
+                </function>
+            </serves>
+        </crown>
+        <meta key="author">SICK AG</meta>
+        <meta key="version">4.0.0</meta>
+        <meta key="priority">low</meta>
+        <meta key="copy-protected">false</meta>
+        <meta key="read-protected">false</meta>
+        <meta key="crown2-flow-engine">false</meta>
+        <meta key="LuaLoadAllEngineAPI">false</meta>
+        <entry default="CSK_Module_PersistentData.lua" path="scripts"/>
+    </application>
+</manifest>
