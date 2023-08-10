@@ -1,8 +1,7 @@
 # Adapter definitions
 $appStudioProjectFolder = "project"
 $gitIgnoreFile = ".gitignore"
-$dependentModules = ("v4.0.0", "dependencies/modulePersistentData", "https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PersistentData"),
-					("v3.0.0", "dependencies/moduleDateTime", "https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_DateTime")
+$dependentModules = @("v4.0.0", "dependencies/modulePersistentData", "https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PersistentData")
 
 $modules = 	"CSK_Module_DeviceNetworkConfig"
 
