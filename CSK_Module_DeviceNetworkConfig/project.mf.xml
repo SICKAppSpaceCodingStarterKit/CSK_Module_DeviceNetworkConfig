@@ -95,9 +95,10 @@ See following descriptions of events/functions regarding further information.
                     <desc>Notify details of executed ping command.</desc>
                     <param desc="Ping details." multiplicity="1" name="details" type="string"/>
                 </event>
-                <event name="OnNewDnsServer">
+                <event name="OnNewDns">
                     <trait>released</trait>
-                    <param desc="" multiplicity="1" name="dnsServerList" type="string"/>
+                    <desc>Notify a new nameserver.</desc>
+                    <param desc="Name server list" multiplicity="1" name="dnsServerList" type="string"/>
                 </event>
                 <event name="OnDataLoadedOnReboot">
                     <desc>Event to call if module tried to load parameters and should be ready.</desc>
@@ -112,6 +113,15 @@ See following descriptions of events/functions regarding further information.
                 </event>
                 <event name="OnDataLoadedOnReboot0">
                     <desc>Event to call if module tried to load parameters and should be ready.</desc>
+                </event>
+                <event name="OnPersistentDataModuleAvailable">
+                    <desc>Notify status if features of PersistendData CSK module  are available</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnDnsIpError">
+                    <trait>released</trait>
+                    <desc>Highlights the DNS 'IP' in UI if format of IP is not correct.</desc>
+                    <param desc="Status" multiplicity="1" name="isError" type="bool"/>
                 </event>
                 <function name="pageCalled">
                     <desc>Function to register "OnResume" of the module UI (only as helper function).</desc>
@@ -162,23 +172,23 @@ See following descriptions of events/functions regarding further information.
                     <desc>Preset IP to ping (see 'ping' function).</desc>
                     <param desc="IP" multiplicity="1" name="ping_ip" type="string"/>
                 </function>
-                <function name="selectedDnsServer">
+                <function name="selectedDns">
                     <trait>released</trait>
-                    <param desc="" multiplicity="1" name="selectedRow" type="string"/>
+                    <desc>Select nameserver entry via table in UI.</desc>
+                    <param desc="The string with chosen row's content in JSON format." multiplicity="1" name="selectedRow" type="string"/>
                 </function>
-                <function name="setDnsServer">
+                <function name="setDns">
                     <trait>released</trait>
-                    <param desc="" multiplicity="1" name="dnsServer" type="string"/>
+                    <desc>Set IP address of the nameserver</desc>
+                    <param desc="Nameserver IP" multiplicity="1" name="dns" type="string"/>
                 </function>
-                <function name="addDnsServer">
+                <function name="addDns">
                     <trait>released</trait>
+                    <desc>Add a new nameserver IP</desc>
                 </function>
-                <function name="removeDnsServer">
+                <function name="removeDns">
                     <trait>released</trait>
-                </function>
-                <function name="getDnsServer">
-                    <trait>released</trait>
-                    <return desc="" multiplicity="1" name="dnsIp" type="string"/>
+                    <desc>Remove the selected nameserver IP</desc>
                 </function>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the "PersistentData" CSK-module</desc>
@@ -197,7 +207,7 @@ See following descriptions of events/functions regarding further information.
             </serves>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">2.0.0</meta>
+        <meta key="version">2.1.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>

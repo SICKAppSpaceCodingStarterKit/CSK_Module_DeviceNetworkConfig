@@ -8,7 +8,7 @@
 --**************************************************************************
 --************************ Start Global Scope ******************************
 --**************************************************************************
-local nameOfModule = 'CSK_DeviceNetworkConfig'
+local NAME_OF_MODULE = 'CSK_DeviceNetworkConfig'
 
 -- Timer to update UI via events after page was loaded
 local tmrDeviceNetworkConfig = Timer.create()
@@ -21,8 +21,8 @@ local currentIP             = '-'
 local currentSubnet         = '-'
 local currentGateway        = '-'
 local currentDHCP           = false
-local dnsServerAdd -- DNS server that should be added
-local dnsServerRemove -- DNS server that should be removed
+local dnsAdd -- DNS that should be added
+local dnsRemove -- DNS that should be removed
 
 local interfacesTable = {} -- table to hold available interfaces
 local jsonInterfaceListContent -- available interfaces as JSON
@@ -51,7 +51,8 @@ Script.serveEvent("CSK_DeviceNetworkConfig.OnSubnetError", "DeviceNetworkConfig_
 Script.serveEvent("CSK_DeviceNetworkConfig.OnGatewayError", "DeviceNetworkConfig_OnGatewayError")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnApplyButtonDisabled", "DeviceNetworkConfig_OnApplyButtonDisabled")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewInterfaceChoice", "DeviceNetworkConfig_OnNewInterfaceChoice")
-Script.serveEvent("CSK_DeviceNetworkConfig.OnNewDnsServer", "DeviceNetworkConfig_OnNewDnsServer")
+Script.serveEvent("CSK_DeviceNetworkConfig.OnNewDns", "DeviceNetworkConfig_OnNewDns")
+Script.serveEvent("CSK_DeviceNetworkConfig.OnDnsIpError", "DeviceNetworkConfig_OnDnsIpError")
 
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelOperatorActive", "DeviceNetworkConfig_OnUserLevelOperatorActive")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelMaintenanceActive", "DeviceNetworkConfig_OnUserLevelMaintenanceActive")
@@ -165,71 +166,152 @@ local function updateUserLevel()
   end
 end
 
--- Get a list of all configured DNS servers
-local function getDnsServerList()
-  local l_dnsServerList = Ethernet.DNS.getNameservers()
+-- Get a list of all configured nameservers
+local function getNameserverList()
   local retValue = {}
-  for _,v in pairs(l_dnsServerList) do
-    table.insert(retValue, {dnsServer= v})
+  for _,v in pairs(Ethernet.DNS.getNameservers()) do
+    -- To enable the display in the dynamic table using the keyword "dns"
+    ---@diagnostic disable-next-line: param-type-mismatch
+    table.insert(retValue, {dns= v})
+  end
+
+  -- If only 127.0.0.1 is use, hide it
+  if #retValue == 1 then
+    if retValue[1].dns == "127.0.0.1" then
+      retValue = {}
+    end
   end
 
   return retValue
 end
 
--- Update configured DNS servers
-local function updateDnsServer(dnsServerList)
-  -- Set name server list
-  
-  
-  -- Check if already added
-  -- Check if duplicate entries available
-
-  -- Store permananently
-  local hash = {}
-  local res = {}
-  
-  for _,v in ipairs(dnsServerList) do
-     if (not hash[v]) then
-         res[#res+1] = v 
-         hash[v] = true
-     end
+-- Update nameserver configuration
+local function updateNameservers(nameserverList)
+  -- Remove duplicate entries in the list
+  local l_hashList = {}
+  local l_cleanedList = {}
+  for _,ip in ipairs(nameserverList) do
+    if (not l_hashList[ip]) then
+      l_cleanedList[#l_cleanedList + 1] = ip
+      l_hashList[ip] = true
+    end
   end
-  Ethernet.DNS.setNameservers(res)
+
+  if #l_cleanedList <= 3 then
+    -- Set nameservers
+    Ethernet.DNS.setNameservers(l_cleanedList)
+    deviceNetworkConfig_Model.parameters.nameservers = l_cleanedList
+  else
+    deviceNetworkConfig_Model.parameters.nameservers = Ethernet.DNS.getNameservers()
+    return
+  end
 
   -- Check if duplicate nameservers configured, this can happen when additional nameservers are added automatically via DHCP
   local l_configuredDns = {}
   local l_duplicateElements = false
-  
-  for _,v in pairs(getDnsServerList()) do
-    if l_configuredDns[v.dnsServer] == nil then
-      l_configuredDns[v.dnsServer] = 1
+
+  for _,v in pairs(getNameserverList()) do
+    if l_configuredDns[v.dns] == nil then
+      l_configuredDns[v.dns] = 1
     else
       -- Duplicate DNS entry detected
-      l_configuredDns[v.dnsServer] = l_configuredDns[v.dnsServer] + 1
+      l_configuredDns[v.dns] = l_configuredDns[v.dns] + 1
       l_duplicateElements = true
     end
   end
 
   -- Remove duplicated DNS
   if l_duplicateElements then
-    local l_resolvedTable = {}
+    l_cleanedList = {}
     for ip,number in pairs(l_configuredDns) do
       if number == 1 then
-        table.insert(l_resolvedTable, ip)
+        table.insert(l_cleanedList, ip)
       end
     end
 
     -- Set name server list again without duplicates added by DHCP
-
-    for k,v in pairs(l_resolvedTable) do
-      print(v)
-    end
-    Ethernet.DNS.setNameservers(l_resolvedTable)
+    Ethernet.DNS.setNameservers(l_cleanedList)
+    deviceNetworkConfig_Model.parameters.nameservers = l_cleanedList
   end
 
-  Script.notifyEvent("DeviceNetworkConfig_OnNewDnsServer", deviceNetworkConfig_Model.helperFuncs.json.encode(getDnsServerList()))
+  -- Status print out
+  local l_statusOutput = ""
+  for _,ip in pairs(l_cleanedList) do
+    l_statusOutput = l_statusOutput .. ip .. " "
+  end
+  _G.logger:info(NAME_OF_MODULE .. ": Added nameservers (" .. l_statusOutput ..")")
+
+  -- Store nameserver entries permanently
+  CSK_DeviceNetworkConfig.sendParameters()
+
+  -- Update DNS UI table
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDns", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
 end
 
+-- Add new nameserver IP
+local function addDns()
+  if dnsAdd ~= nil and dnsAdd ~= "" then
+    local l_nameservers = {}
+    for _,ip in pairs(getNameserverList()) do
+      if ip ~= dnsAdd then
+        -- Add already added nameservers
+        table.insert(l_nameservers, ip.dns)
+      end
+    end
+
+    -- Add nameserver
+    table.insert(l_nameservers, dnsAdd)
+
+    -- Update DNS table
+    updateNameservers(l_nameservers)
+  end
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.addDns', addDns)
+
+-- Remove selected nameserver
+local function removeDns()
+  if dnsRemove ~= nil and dnsRemove ~= "" then
+    local l_nameservers = {}
+    for _,v in pairs(getNameserverList()) do
+      if v.dns ~= dnsRemove then
+        table.insert(l_nameservers, v.dns)
+      end
+    end
+
+    updateNameservers(l_nameservers)
+  end
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.removeDns', removeDns)
+
+-- Set nameserver IP
+local function setDns(nameserver)
+  if deviceNetworkConfig_Model.helperFuncs.checkIP(nameserver) then
+    Script.notifyEvent("DeviceNetworkConfig_OnDnsIpError", false)
+    dnsAdd = nameserver
+  else
+    Script.notifyEvent("DeviceNetworkConfig_OnDnsIpError", true)
+    dnsAdd = nil
+  end
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setDns', setDns)
+
+-- Selected nameserver row in the table
+local function selectedDns(selectedRow)
+  if selectedRow ~= "" then
+    local l_data = deviceNetworkConfig_Model.helperFuncs.json.decode(selectedRow)
+    for _,v in pairs(getNameserverList()) do
+      if v.dns == l_data.dns then
+        dnsRemove = v.dns
+        break
+      end
+    end
+  end
+
+  -- Workaround to reset the selection of the DNS in the UI table
+  Script.sleep(100)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDns", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.selectedDns', selectedDns)
 
 --- Function to send all relevant values to UI on resume
 local function handleOnExpiredTmrDeviceNetworkConfig()
@@ -247,11 +329,11 @@ local function handleOnExpiredTmrDeviceNetworkConfig()
   Script.notifyEvent("DeviceNetworkConfig_OnNewDefaultGateway", '-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceChoice",'-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
-  Script.notifyEvent("DeviceNetworkConfig_OnNewDnsServer", deviceNetworkConfig_Model.helperFuncs.json.encode(getDnsServerList()))
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDns", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
 
-  --Script.notifyEvent("DeviceNetworkConfig_OnNewStatusLoadParameterOnReboot", deviceNetworkConfig_Model.parameterLoadOnReboot)
-  --Script.notifyEvent("DeviceNetworkConfig_OnPersistentDataModuleAvailable", deviceNetworkConfig_Model.persistentModuleAvailable)
-  --Script.notifyEvent("DeviceNetworkConfig_OnNewParameterName", deviceNetworkConfig_Model.parametersName)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusLoadParameterOnReboot", deviceNetworkConfig_Model.parameterLoadOnReboot)
+  Script.notifyEvent("DeviceNetworkConfig_OnPersistentDataModuleAvailable", deviceNetworkConfig_Model.persistentModuleAvailable)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewParameterName", deviceNetworkConfig_Model.parametersName)
 
   checkWhatToDisable()
 end
@@ -265,63 +347,6 @@ local function pageCalled()
   return ''
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.pageCalled", pageCalled)
-
--- Add new DNS server IP
-local function addDnsServer()
-  if dnsServerAdd ~= nil and dnsServerAdd ~= "" then
-    local l_dnsServers = {}
-    for _,v in pairs(getDnsServerList()) do
-      table.insert(l_dnsServers, v.dnsServer)
-    end
-    table.insert(l_dnsServers, dnsServerAdd)
-
-    updateDnsServer(l_dnsServers)
-  end
-end
-Script.serveFunction('CSK_DeviceNetworkConfig.addDnsServer', addDnsServer)
-
--- Set DNS server IP
-local function setDnsServer(dnsServer)
-  dnsServerAdd = dnsServer
-end
-Script.serveFunction('CSK_DeviceNetworkConfig.setDnsServer', setDnsServer)
-
--- Remove selected DNS server
-local function removeDnsServer()
-  if dnsServerRemove ~= nil and dnsServerRemove ~= "" then
-    local l_dnsServers = {}
-    for _,v in pairs(getDnsServerList()) do
-      if v.dnsServer ~= dnsServerRemove then
-        table.insert(l_dnsServers, v.dnsServer)
-      end
-    end
-
-    updateDnsServer(l_dnsServers)
-  end
-end
-Script.serveFunction('CSK_DeviceNetworkConfig.removeDnsServer', removeDnsServer)
-
-
--- Selected DNS server row
-local function selectedDnsServer(selectedRow)
-  if selectedRow ~= "" then
-    local l_data = deviceNetworkConfig_Model.helperFuncs.json.decode(selectedRow)
-    for _,v in pairs(getDnsServerList()) do
-      if v.dnsServer == l_data.dnsServer then
-        dnsServerRemove = v.dnsServer
-        break
-      end
-    end
-  end
-end
-Script.serveFunction('CSK_DeviceNetworkConfig.selectedDnsServer', selectedDnsServer)
-
--- Get DNS text field content
-local function getDnsServer()
-
- return dnsServerAdd
-end
-Script.serveFunction('CSK_DeviceNetworkConfig.getDnsServer', getDnsServer)
 
 local function selectInterface(row_selected)
   Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
@@ -421,10 +446,10 @@ local function applyConfig()
   if deviceNetworkConfig_Model.helperFuncs.checkIP(currentIP) and deviceNetworkConfig_Model.helperFuncs.checkIP(currentSubnet) and deviceNetworkConfig_Model.helperFuncs.checkIP(currentGateway) or currentGateway == '' then
     Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'processing')
     if currentDHCP == true then
-      _G.logger:info(nameOfModule .. ": Applying device's Ethernet config: \n  Interface " .. currentInterfaceName .. " \n  DHCP: " .. tostring(currentDHCP))
+      _G.logger:info(NAME_OF_MODULE .. ": Applying device's Ethernet config: \n  Interface " .. currentInterfaceName .. " \n  DHCP: " .. tostring(currentDHCP))
       deviceNetworkConfig_Model.applyEthernetConfig(currentInterfaceName, currentDHCP, nil, nil, nil)
     else
-      _G.logger:info(nameOfModule .. ": Applying device's Ethernet config: \n  Interface " .. currentInterfaceName .. " \n  DHCP: " .. tostring(currentDHCP) .. " \n  IP: " .. currentIP.. " \n  Subnet: " .. currentSubnet .. " \n  Gateway: " .. currentGateway)
+      _G.logger:info(NAME_OF_MODULE .. ": Applying device's Ethernet config: \n  Interface " .. currentInterfaceName .. " \n  DHCP: " .. tostring(currentDHCP) .. " \n  IP: " .. currentIP.. " \n  Subnet: " .. currentSubnet .. " \n  Gateway: " .. currentGateway)
       deviceNetworkConfig_Model.applyEthernetConfig(currentInterfaceName, currentDHCP, currentIP, currentSubnet, currentGateway)
     end
     refresh()
@@ -432,14 +457,14 @@ local function applyConfig()
   else
     Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'error')
   end
-  _G.logger:info(nameOfModule .. ": Applying device's Ethernet config finished")
+  _G.logger:info(NAME_OF_MODULE .. ": Applying device's Ethernet config finished")
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.applyConfig", applyConfig)
 
 --- Function to react 'Ethernet.Interface.OnLinkActiveChanged' event
 local function handleOnLinkActiveChanged(ifName, linkActive)
   refresh()
-  _G.logger:info(nameOfModule .. ': New link status = ' .. tostring(linkActive) .. ' on interface ' .. ifName)
+  _G.logger:info(NAME_OF_MODULE .. ': New link status = ' .. tostring(linkActive) .. ' on interface ' .. ifName)
 end
 Script.register("Ethernet.Interface.OnLinkActiveChanged", handleOnLinkActiveChanged)
 
@@ -466,11 +491,8 @@ local function sendParameters()
   if deviceNetworkConfig_Model.persistentModuleAvailable then
     CSK_PersistentData.addParameter(deviceNetworkConfig_Model.helperFuncs.convertTable2Container(deviceNetworkConfig_Model.parameters), deviceNetworkConfig_Model.parametersName)
     CSK_PersistentData.setModuleParameterName(NAME_OF_MODULE, deviceNetworkConfig_Model.parametersName, deviceNetworkConfig_Model.parameterLoadOnReboot)
-    _G.logger:info(NAME_OF_MODULE .. ": Send LiveConnect parameters with name '" .. deviceNetworkConfig_Model.parametersName .. "' to PersistentData module.")
+    _G.logger:info(NAME_OF_MODULE .. ": Send parameters with name '" .. deviceNetworkConfig_Model.parametersName .. "' to PersistentData module.")
     CSK_PersistentData.saveData()
-
-    -- Reinit LiveConnect client to ensure that the parameters are accepted
-    deviceNetworkConfig_Model.iccClient:reinit()
   else
     _G.logger:warning(NAME_OF_MODULE .. ": PersistentData Module not available.")
   end
@@ -486,10 +508,10 @@ local function loadParameters()
       _G.logger:info(NAME_OF_MODULE .. ": Loaded parameters from PersistentData module.")
       deviceNetworkConfig_Model.parameters = deviceNetworkConfig_Model.helperFuncs.convertContainer2Table(data)
 
-      -- Reinit LiveConnect client to ensure that the parameters are accepted
-      deviceNetworkConfig_Model.iccClient:reinit()
+      -- Load nameservers
+      updateNameservers(deviceNetworkConfig_Model.parameters.nameservers)
 
-      CSK_LiveConnect.pageCalled()
+      CSK_DeviceNetworkConfig.pageCalled()
     else
       _G.logger:warning(NAME_OF_MODULE .. ": Loading parameters from PersistentData module did not work.")
     end

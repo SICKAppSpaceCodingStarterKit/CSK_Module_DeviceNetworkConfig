@@ -170,46 +170,48 @@
 							</crown-binding>
 						</davinci-button>
 						<h3 id="Heading31">DNS settings</h3>
+                         <p>To delete a nameserver, please select a DNS entry from the list and press "Remove".<br>
+                                    A maximum of three nameserves can be added.<br>
+                                    Nameservers that are added automatically via DHCP cannot be deleted.<br><br>
+                                    <b>Please note that the DNS entries can only be persisted, if the app "CSK_Module_PersistentData" is loaded.</b></p>
 						<layout-column id="ColumnLayout4">
 							<layout-row id="RowLayout10">
 								<davinci-text-field id="TF_DnsEntry" type="text"
-									label="IP address of the name server" pattern="">
+									label="IP address of the DNS" pattern="">
+									<crown-on property="error"
+										crown-event="CSK_DeviceNetworkConfig/OnDnsIpError">
+									</crown-on>
 									<crown-set event="change"
-										crown-function="CSK_DeviceNetworkConfig/setDnsServer"
-										protocol="crownMSGPACK" crown-path="dnsServer">
+										crown-function="CSK_DeviceNetworkConfig/setDns"
+										protocol="crownMSGPACK" crown-path="dns">
 									</crown-set>
 								</davinci-text-field>
 								<davinci-button id="BTN_AddDns" type="primary" icon-position="append"
-									title="A maximum of two name servers can be added. Name servers that are added automatically via DHCP cannot be deleted."
-									icon="image/control_point">
+									title="Add the defined DNS" icon="image/control_point">
 									<span>Add</span>
 									<crown-set event="submit"
-										crown-function="CSK_DeviceNetworkConfig/addDnsServer"
+										crown-function="CSK_DeviceNetworkConfig/addDns"
 										protocol="crownMSGPACK">
 									</crown-set>
 								</davinci-button>
 							</layout-row>
-					<davinci-status-text id="StatusText1">
-						<span id="UpstreamIPv4Error">Invalid text field content!</span>
-						<local-binding property="error" name="UpstreamIPv4Change" update-on-resume converter="InvalidUpstreamIPv4Display"></local-binding>
-					</davinci-status-text>
 							<layout-row id="RowLayout11" style="align-items: flex-end">
-								<curie-table id="DT_DnsList" select-mode="highlight_row">
-									<curie-table-column id="dnsServer" header="Configured name server">
+								<curie-table id="DT_DnsList" select-mode="highlight_row" selectable>
+									<curie-table-column id="dns" header="Nameserver">
 									</curie-table-column>
 									<crown-set event="row-selected"
-										crown-function="CSK_DeviceNetworkConfig/selectedDnsServer"
+										crown-function="CSK_DeviceNetworkConfig/selectedDns"
 										protocol="crownMSGPACK" crown-path="selectedRow">
 									</crown-set>
 									<crown-on property="data"
-										crown-event="CSK_DeviceNetworkConfig/OnNewDnsServer">
+										crown-event="CSK_DeviceNetworkConfig/OnNewDns">
 									</crown-on>
 								</curie-table>
 								<davinci-button id="BTN_RemoveDns" type="primary"
-									icon-position="append">
+									icon-position="append" title="Remove the selected DNS entry">
 									<span>Remove</span>
 									<crown-set event="submit"
-										crown-function="CSK_DeviceNetworkConfig/removeDnsServer"
+										crown-function="CSK_DeviceNetworkConfig/removeDns"
 										protocol="crownMSGPACK">
 									</crown-set>
 								</davinci-button>
