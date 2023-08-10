@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<manifest>
+    <application name="HomeScreen">
+        <crown name="HomeScreen">
+            <desc>user script</desc>
+            <serves>
+                <event name="AppsChanged">
+                    <desc>No description yet...</desc>
+                    <param desc="No description yet..." name="json" type="string"/>
+                </event>
+                <function name="setSelectedApp">
+                    <desc>No description yet...</desc>
+                    <param desc="selectedApp" name="appName" type="string"/>
+                </function>
+                <function name="getCurrentApps">
+                    <desc>No description yet...</desc>
+                    <return desc="No description yet..." name="json" type="string"/>
+                </function>
+                <function name="getSelectedApp">
+                    <desc>No description yet...</desc>
+                    <return desc="appName" name="appName" type="string"/>
+                </function>
+                <function name="openApp">
+                    <desc>No description yet...</desc>
+                </function>
+            </serves>
+        </crown>
+        <crown name="Engine">
+            <desc>no description yet</desc>
+            <uses>
+                <event name="OnStarted"/>
+                <function name="listApps"/>
+            </uses>
+        </crown>
+        <crown name="TCPIPClient">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="receive"/>
+                <function name="setIPAddress"/>
+                <function name="isConnected"/>
+                <function name="connect"/>
+                <function name="create"/>
+                <function name="transmit"/>
+                <function name="setPort"/>
+                <function name="disconnect"/>
+            </uses>
+        </crown>
+        <crown name="Timer">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="create"/>
+            </uses>
+        </crown>
+        <crown name="Command">
+            <desc>no description yet</desc>
+            <uses/>
+            <crown name="Client">
+                <desc>no description yet</desc>
+                <uses>
+                    <function name="open"/>
+                    <function name="setConnection"/>
+                    <function name="createNode"/>
+                    <function name="invoke"/>
+                    <function name="setDescriptionFile"/>
+                    <function name="create"/>
+                    <function name="setProtocol"/>
+                </uses>
+            </crown>
+        </crown>
+        <crown name="string">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="sub"/>
+                <function name="len"/>
+            </uses>
+        </crown>
+        <crown name="File">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="exists"/>
+            </uses>
+        </crown>
+        <crown name="pairs">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="pairs"/>
+            </uses>
+        </crown>
+        <crown name="table">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="insert"/>
+            </uses>
+        </crown>
+        <crown name="assert">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="assert"/>
+            </uses>
+        </crown>
+        <crown name="Parameters">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="set"/>
+                <function name="get"/>
+            </uses>
+            <crown name="Node">
+                <desc>no description yet</desc>
+                <uses>
+                    <function name="set"/>
+                </uses>
+            </crown>
+        </crown>
+        <crown name="Script">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="register"/>
+                <function name="serveFunction"/>
+                <function name="notifyEvent"/>
+                <function name="serveEvent"/>
+            </uses>
+        </crown>
+        <crown name="Monitor">
+            <desc>no description yet</desc>
+            <uses/>
+            <crown name="App">
+                <desc>no description yet</desc>
+                <uses>
+                    <function name="create"/>
+                    <function name="getStatusInfo"/>
+                </uses>
+            </crown>
+        </crown>
+        <crown name="require">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="require"/>
+            </uses>
+        </crown>
+        <crown name="print">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="print"/>
+            </uses>
+        </crown>
+        <crown name="tostring">
+            <desc>no description yet</desc>
+            <uses>
+                <function name="tostring"/>
+            </uses>
+        </crown>
+        <meta key="author">Markus Haas</meta>
+        <meta key="version">1.1.0</meta>
+        <meta key="priority">low</meta>
+        <meta key="read-protected">false</meta>
+        <meta key="copy-protected">false</meta>
+        <entry default="main.lua" path="scripts"/>
+    </application>
+</manifest>

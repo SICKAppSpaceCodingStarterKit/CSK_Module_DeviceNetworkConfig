@@ -3,7 +3,8 @@ $appStudioProjectFolder = "project"
 $gitIgnoreFile = ".gitignore"
 $dependentModules = ,("v4.0.0", "dependencies/modulePersistentData", "https://github.com/SICKAppSpaceCodingStarterKit/CSK_Module_PersistentData")
 
-$modules = 	"CSK_Module_DeviceNetworkConfig"
+$modules = 	"CSK_Module_DeviceNetworkConfig",
+			"HomeScreen"
 
 # Add folder to the GIT ignore list if not already exist
 Function addFolderToGitIgnore

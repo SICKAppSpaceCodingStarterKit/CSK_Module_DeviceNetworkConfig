@@ -31,6 +31,10 @@ local jsonInterfaceListContent -- available interfaces as JSON
 local deviceNetworkConfig_Model
 
 -- ************************ UI Events Start ********************************
+Script.serveEvent("CSK_DeviceNetworkConfig.OnNewStatusLoadParameterOnReboot", "DeviceNetworkConfig_OnNewStatusLoadParameterOnReboot")
+Script.serveEvent("CSK_DeviceNetworkConfig.OnPersistentDataModuleAvailable", "DeviceNetworkConfig_OnPersistentDataModuleAvailable")
+Script.serveEvent("CSK_DeviceNetworkConfig.OnNewParameterName", "DeviceNetworkConfig_OnNewParameterName")
+Script.serveEvent("CSK_DeviceNetworkConfig.OnDataLoadedOnReboot", "DeviceNetworkConfig_OnDataLoadedOnReboot")
 
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewEthernetConfigStatus", "DeviceNetworkConfig_OnNewEthernetConfigStatus")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewInterfaceTable", "DeviceNetworkConfig_OnNewInterfaceTable")
@@ -229,7 +233,6 @@ end
 
 --- Function to send all relevant values to UI on resume
 local function handleOnExpiredTmrDeviceNetworkConfig()
-
   updateUserLevel()
 
   refresh()
@@ -244,8 +247,11 @@ local function handleOnExpiredTmrDeviceNetworkConfig()
   Script.notifyEvent("DeviceNetworkConfig_OnNewDefaultGateway", '-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceChoice",'-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
-
   Script.notifyEvent("DeviceNetworkConfig_OnNewDnsServer", deviceNetworkConfig_Model.helperFuncs.json.encode(getDnsServerList()))
+
+  --Script.notifyEvent("DeviceNetworkConfig_OnNewStatusLoadParameterOnReboot", deviceNetworkConfig_Model.parameterLoadOnReboot)
+  --Script.notifyEvent("DeviceNetworkConfig_OnPersistentDataModuleAvailable", deviceNetworkConfig_Model.persistentModuleAvailable)
+  --Script.notifyEvent("DeviceNetworkConfig_OnNewParameterName", deviceNetworkConfig_Model.parametersName)
 
   checkWhatToDisable()
 end
@@ -437,9 +443,91 @@ local function handleOnLinkActiveChanged(ifName, linkActive)
 end
 Script.register("Ethernet.Interface.OnLinkActiveChanged", handleOnLinkActiveChanged)
 
-return setDeviceNetworkConfig_Model_Handle
-
 --**************************************************************************
 --**********************End Function Scope *********************************
 --**************************************************************************
 
+-- **********************************************************************************
+-- Start of functions for PersistentData module usage
+-- **********************************************************************************
+
+-------------------------------------------------------------------------------------
+-- Set name of the parameter set
+---@param name string
+local function setParameterName(name)
+  _G.logger:info(NAME_OF_MODULE .. ": Set parameter name: " .. tostring(name))
+  deviceNetworkConfig_Model.parametersName = tostring(name)
+end
+Script.serveFunction("CSK_DeviceNetworkConfig.setParameterName", setParameterName)
+
+-------------------------------------------------------------------------------------
+-- Send parameters
+local function sendParameters()
+  if deviceNetworkConfig_Model.persistentModuleAvailable then
+    CSK_PersistentData.addParameter(deviceNetworkConfig_Model.helperFuncs.convertTable2Container(deviceNetworkConfig_Model.parameters), deviceNetworkConfig_Model.parametersName)
+    CSK_PersistentData.setModuleParameterName(NAME_OF_MODULE, deviceNetworkConfig_Model.parametersName, deviceNetworkConfig_Model.parameterLoadOnReboot)
+    _G.logger:info(NAME_OF_MODULE .. ": Send LiveConnect parameters with name '" .. deviceNetworkConfig_Model.parametersName .. "' to PersistentData module.")
+    CSK_PersistentData.saveData()
+
+    -- Reinit LiveConnect client to ensure that the parameters are accepted
+    deviceNetworkConfig_Model.iccClient:reinit()
+  else
+    _G.logger:warning(NAME_OF_MODULE .. ": PersistentData Module not available.")
+  end
+end
+Script.serveFunction("CSK_DeviceNetworkConfig.sendParameters", sendParameters)
+
+-------------------------------------------------------------------------------------
+-- Load parameters
+local function loadParameters()
+  if deviceNetworkConfig_Model.persistentModuleAvailable then
+    local data = CSK_PersistentData.getParameter(deviceNetworkConfig_Model.parametersName)
+    if data then
+      _G.logger:info(NAME_OF_MODULE .. ": Loaded parameters from PersistentData module.")
+      deviceNetworkConfig_Model.parameters = deviceNetworkConfig_Model.helperFuncs.convertContainer2Table(data)
+
+      -- Reinit LiveConnect client to ensure that the parameters are accepted
+      deviceNetworkConfig_Model.iccClient:reinit()
+
+      CSK_LiveConnect.pageCalled()
+    else
+      _G.logger:warning(NAME_OF_MODULE .. ": Loading parameters from PersistentData module did not work.")
+    end
+  else
+    _G.logger:warning(NAME_OF_MODULE .. ": PersistentData Module not available.")
+  end
+end
+Script.serveFunction("CSK_DeviceNetworkConfig.loadParameters", loadParameters)
+
+-------------------------------------------------------------------------------------
+-- Set parameter load on reboot
+---@param status bool
+local function setLoadOnReboot(status)
+  deviceNetworkConfig_Model.parameterLoadOnReboot = status
+  _G.logger:info(NAME_OF_MODULE .. ": Set new status to load setting on reboot: " .. tostring(status))
+end
+Script.serveFunction("CSK_DeviceNetworkConfig.setLoadOnReboot", setLoadOnReboot)
+
+-------------------------------------------------------------------------------------
+-- Handle event "OnInitialDataLoaded"
+local function handleOnInitialDataLoaded()
+  if string.sub(CSK_PersistentData.getVersion(), 1, 1) == '1' then
+    _G.logger:warning(NAME_OF_MODULE .. ': CSK_PersistentData module is too old and will not work. Please update CSK_PersistentData module.')
+    deviceNetworkConfig_Model.persistentModuleAvailable = false
+  else
+
+    local parameterName, loadOnReboot = CSK_PersistentData.getModuleParameterName(NAME_OF_MODULE)
+    if parameterName then
+      deviceNetworkConfig_Model.parametersName = parameterName
+      deviceNetworkConfig_Model.parameterLoadOnReboot = loadOnReboot
+    end
+
+    if deviceNetworkConfig_Model.parameterLoadOnReboot then
+      loadParameters()
+    end
+    Script.notifyEvent('DeviceNetworkConfig_OnDataLoadedOnReboot')
+  end
+end
+Script.register("CSK_PersistentData.OnInitialDataLoaded", handleOnInitialDataLoaded)
+
+return setDeviceNetworkConfig_Model_Handle

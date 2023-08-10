@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Device xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\Docu\Parameter.cid.xsd">
+  <UserLevel/>
+  <IFD>
+    <CID>
+      <Block Name="HomeScreen">
+        <Group Name="General">
+          <MethodIn Name="FileSystemAccess" InvocationAccessRef="Run" Description="EDP2 File system accessor" CommunicationName="mFSAcc" ExecutionTimeout="30000">
+            <Parameter>
+              <Struct>
+                <BasicType Name="URL">
+                  <!-- may be a whole path or just a URL query or anything other -->
+                  <String Length="286" FixedLength="False"/>
+                </BasicType>
+                <BasicType Name="Buffer">
+                  <String Length="1022" FixedLength="False"/>
+                </BasicType>
+                <BasicType Name="BufferCRC">
+                  <UDInt/>
+                </BasicType>
+              </Struct>
+            </Parameter>
+            <ReturnValue>
+              <Struct>
+                <BasicType Name="URL">
+                  <String Length="286" FixedLength="False"/>
+                </BasicType>
+                <BasicType Name="Buffer">
+                  <String Length="1022" FixedLength="False"/>
+                </BasicType>
+                <BasicType Name="BufferCRC">
+                  <UDInt/>
+                </BasicType>
+              </Struct>
+            </ReturnValue>
+          </MethodIn>
+        </Group>
+      </Block>
+    </CID>
+  </IFD>
+  <Hardware>
+    <VirtualMemory Name="ApplicationParameters"/>
+  </Hardware>
+</Device>

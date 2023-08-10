@@ -99,6 +99,20 @@ See following descriptions of events/functions regarding further information.
                     <trait>released</trait>
                     <param desc="" multiplicity="1" name="dnsServerList" type="string"/>
                 </event>
+                <event name="OnDataLoadedOnReboot">
+                    <desc>Event to call if module tried to load parameters and should be ready.</desc>
+                </event>
+                <event name="OnNewStatusLoadParameterOnReboot">
+                    <desc>Notify status if parameters should be loaded on app-/device- boot up</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewParameterName">
+                    <desc>Notify name of persistent data parameter</desc>
+                    <param desc="Parameter name" multiplicity="1" name="name" type="string"/>
+                </event>
+                <event name="OnDataLoadedOnReboot0">
+                    <desc>Event to call if module tried to load parameters and should be ready.</desc>
+                </event>
                 <function name="pageCalled">
                     <desc>Function to register "OnResume" of the module UI (only as helper function).</desc>
                     <return desc="Empty string (only needed to simplify binding)." multiplicity="1" name="empty" type="string"/>
@@ -165,6 +179,20 @@ See following descriptions of events/functions regarding further information.
                 <function name="getDnsServer">
                     <trait>released</trait>
                     <return desc="" multiplicity="1" name="dnsIp" type="string"/>
+                </function>
+                <function name="setParameterName">
+                    <desc>Function to set the name of the parameters if saved/loaded via the "PersistentData" CSK-module</desc>
+                    <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
+                </function>
+                <function name="sendParameters">
+                    <desc>Send parameters to PersistentData CSK module if possible to save them</desc>
+                </function>
+                <function name="loadParameters">
+                    <desc>Load parameters for this module from the PersistentData CSK-module if possible and use them</desc>
+                </function>
+                <function name="setLoadOnReboot">
+                    <desc>Configure if this module should load its saved parameters at app- / device- boot up</desc>
+                    <param desc="Set status" multiplicity="1" name="status" type="bool"/>
                 </function>
             </serves>
         </crown>
