@@ -4,6 +4,8 @@ Module to provide ethernet setup functionality.
 ![plot](./docu/media/UI_Screenshot.png)
 
 ## How to Run
+Please checkout the project and run the Powershell script "createProject.ps1". The script creates a project folder that can be opened with AppStudio. New versions of the dependent modules can also be loaded into the project via the script.
+
 The app includes an intuitive GUI to setup the ethernet setup of the device.  
 For further information check out the [documentation](./docu/CSK_Module_DeviceNetworkConfig.html) in the folder "docu".
 
