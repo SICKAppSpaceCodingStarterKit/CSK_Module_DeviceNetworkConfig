@@ -72,7 +72,7 @@ foreach($module in $dependentModules)
 	# Create sym links if not exists
 	foreach($app in Get-ChildItem ($module[1]) -Directory)
 	{
-		if (-Not $app.name.StartsWith('CSK_Module'))
+		if (-Not $app.name.StartsWith('CSK_'))
 		{
 			continue
 		}
