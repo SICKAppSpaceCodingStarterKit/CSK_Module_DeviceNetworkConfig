@@ -36,7 +36,7 @@ Function addFolderToGitIgnore
 "====================================================================================="
 
 # Script input promps
-$updateSubtrees = Read-Host -Prompt "Do you want to add/update the dependent modules used in this project? (add/pull GIT subtrees)? (y=add/update + create project, n=create project only)"
+$updateSubtrees = Read-Host -Prompt "Do you want to add/update the dependent modules used in this project? (y=add/update + create project, n=create project only)"
 $moduleUpdate = $false
 if ($updateSubtrees -eq "y")
 {
