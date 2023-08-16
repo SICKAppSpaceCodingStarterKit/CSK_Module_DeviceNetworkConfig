@@ -33,7 +33,7 @@ deviceNetworkConfig_Model.parameters = {}
 deviceNetworkConfig_Model.parameters.nameservers = {}; -- Name servers (DNS)
 
 -- Default values for persistent data
--- If available, following values will be updated from data of PersistentData (check PersistentData module for this)
+-- If available, following values will be updated from data of CSK_PersistentData module (check CSK_PersistentData module for this)
 deviceNetworkConfig_Model.parametersName = 'CSK_DeviceNetworkConfig_Parameter' -- name of parameter dataset to be used for this module
 deviceNetworkConfig_Model.parameterLoadOnReboot = true -- Status if parameter dataset should be loaded on app/device reboot
 
