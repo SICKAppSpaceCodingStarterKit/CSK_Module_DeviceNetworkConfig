@@ -95,7 +95,7 @@ See following descriptions of events/functions regarding further information.
                     <desc>Notify details of executed ping command.</desc>
                     <param desc="Ping details." multiplicity="1" name="details" type="string"/>
                 </event>
-                <event name="OnNewDns">
+                <event name="OnNewDNS">
                     <trait>released</trait>
                     <desc>Notify a new nameserver.</desc>
                     <param desc="Name server list" multiplicity="1" name="dnsServerList" type="string"/>
@@ -104,21 +104,18 @@ See following descriptions of events/functions regarding further information.
                     <desc>Event to call if module tried to load parameters and should be ready.</desc>
                 </event>
                 <event name="OnNewStatusLoadParameterOnReboot">
-                    <desc>Notify status if parameters should be loaded on app-/device- boot up</desc>
+                    <desc>Notify status if parameters should be loaded on app/device boot up.</desc>
                     <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
                 <event name="OnNewParameterName">
-                    <desc>Notify name of persistent data parameter</desc>
+                    <desc>Notify name of persistent data parameter.</desc>
                     <param desc="Parameter name" multiplicity="1" name="name" type="string"/>
                 </event>
-                <event name="OnDataLoadedOnReboot0">
-                    <desc>Event to call if module tried to load parameters and should be ready.</desc>
-                </event>
                 <event name="OnPersistentDataModuleAvailable">
-                    <desc>Notify status if features of PersistendData CSK module  are available</desc>
+                    <desc>Notify status if features of CSK_PersistendData module are available.</desc>
                     <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
-                <event name="OnDnsIpError">
+		<event name="OnDNSIPError">
                     <trait>released</trait>
                     <desc>Highlights the DNS 'IP' in UI if format of IP is not correct.</desc>
                     <param desc="Status" multiplicity="1" name="isError" type="bool"/>
@@ -172,37 +169,37 @@ See following descriptions of events/functions regarding further information.
                     <desc>Preset IP to ping (see 'ping' function).</desc>
                     <param desc="IP" multiplicity="1" name="ping_ip" type="string"/>
                 </function>
-                <function name="selectedDns">
+                <function name="selectDNSViaUI">
                     <trait>released</trait>
                     <desc>Select nameserver entry via table in UI.</desc>
                     <param desc="The string with chosen row's content in JSON format." multiplicity="1" name="selectedRow" type="string"/>
                 </function>
-                <function name="setDns">
+                <function name="setDNS">
                     <trait>released</trait>
-                    <desc>Set IP address of the nameserver</desc>
+                    <desc>Set IP address of the nameserver.</desc>
                     <param desc="Nameserver IP" multiplicity="1" name="dns" type="string"/>
                 </function>
-                <function name="addDns">
+                <function name="addDNS">
                     <trait>released</trait>
-                    <desc>Add a new nameserver IP</desc>
+                    <desc>Add a new nameserver IP.</desc>
                 </function>
-                <function name="removeDns">
+                <function name="removeDNS">
                     <trait>released</trait>
-                    <desc>Remove the selected nameserver IP</desc>
+                    <desc>Remove the selected nameserver IP.</desc>
                 </function>
                 <function name="setParameterName">
-                    <desc>Function to set the name of the parameters if saved/loaded via the "PersistentData" CSK-module</desc>
-                    <param desc="Name of the parameter" multiplicity="1" name="name" type="string"/>
+                    <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
+                    <param desc="Name of the parameter." multiplicity="1" name="name" type="string"/>
                 </function>
                 <function name="sendParameters">
-                    <desc>Send parameters to PersistentData CSK module if possible to save them</desc>
+                    <desc>Send parameters to CSK_PersistentData module if possible to save them.</desc>
                 </function>
                 <function name="loadParameters">
-                    <desc>Load parameters for this module from the PersistentData CSK-module if possible and use them</desc>
+                    <desc>Load parameters for this module from the CSK_PersistentData module if possible and use them.</desc>
                 </function>
                 <function name="setLoadOnReboot">
-                    <desc>Configure if this module should load its saved parameters at app- / device- boot up</desc>
-                    <param desc="Set status" multiplicity="1" name="status" type="bool"/>
+                    <desc>Configure if this module should load its saved parameters at app/device boot up.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </function>
             </serves>
         </crown>

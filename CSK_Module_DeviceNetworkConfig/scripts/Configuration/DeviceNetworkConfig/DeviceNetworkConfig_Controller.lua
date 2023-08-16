@@ -51,8 +51,8 @@ Script.serveEvent("CSK_DeviceNetworkConfig.OnSubnetError", "DeviceNetworkConfig_
 Script.serveEvent("CSK_DeviceNetworkConfig.OnGatewayError", "DeviceNetworkConfig_OnGatewayError")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnApplyButtonDisabled", "DeviceNetworkConfig_OnApplyButtonDisabled")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewInterfaceChoice", "DeviceNetworkConfig_OnNewInterfaceChoice")
-Script.serveEvent("CSK_DeviceNetworkConfig.OnNewDns", "DeviceNetworkConfig_OnNewDns")
-Script.serveEvent("CSK_DeviceNetworkConfig.OnDnsIpError", "DeviceNetworkConfig_OnDnsIpError")
+Script.serveEvent("CSK_DeviceNetworkConfig.OnNewDNS", "DeviceNetworkConfig_OnNewDNS")
+Script.serveEvent("CSK_DeviceNetworkConfig.OnDNSIPError", "DeviceNetworkConfig_OnDNSIPError")
 
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelOperatorActive", "DeviceNetworkConfig_OnUserLevelOperatorActive")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelMaintenanceActive", "DeviceNetworkConfig_OnUserLevelMaintenanceActive")
@@ -186,6 +186,7 @@ local function getNameserverList()
 end
 
 -- Update nameserver configuration
+---@param nameserverList string[] List of nameservers
 local function updateNameservers(nameserverList)
   -- Remove duplicate entries in the list
   local l_hashList = {}
@@ -245,11 +246,10 @@ local function updateNameservers(nameserverList)
   CSK_DeviceNetworkConfig.sendParameters()
 
   -- Update DNS UI table
-  Script.notifyEvent("DeviceNetworkConfig_OnNewDns", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDNS", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
 end
 
--- Add new nameserver IP
-local function addDns()
+local function addDNS()
   if dnsAdd ~= nil and dnsAdd ~= "" then
     local l_nameservers = {}
     for _,ip in pairs(getNameserverList()) do
@@ -266,10 +266,9 @@ local function addDns()
     updateNameservers(l_nameservers)
   end
 end
-Script.serveFunction('CSK_DeviceNetworkConfig.addDns', addDns)
+Script.serveFunction('CSK_DeviceNetworkConfig.addDNS', addDNS)
 
--- Remove selected nameserver
-local function removeDns()
+local function removeDNS()
   if dnsRemove ~= nil and dnsRemove ~= "" then
     local l_nameservers = {}
     for _,v in pairs(getNameserverList()) do
@@ -281,22 +280,20 @@ local function removeDns()
     updateNameservers(l_nameservers)
   end
 end
-Script.serveFunction('CSK_DeviceNetworkConfig.removeDns', removeDns)
+Script.serveFunction('CSK_DeviceNetworkConfig.removeDNS', removeDNS)
 
--- Set nameserver IP
-local function setDns(nameserver)
+local function setDNS(nameserver)
   if deviceNetworkConfig_Model.helperFuncs.checkIP(nameserver) then
-    Script.notifyEvent("DeviceNetworkConfig_OnDnsIpError", false)
+    Script.notifyEvent("DeviceNetworkConfig_OnDNSIPError", false)
     dnsAdd = nameserver
   else
-    Script.notifyEvent("DeviceNetworkConfig_OnDnsIpError", true)
+    Script.notifyEvent("DeviceNetworkConfig_OnDNSIPError", true)
     dnsAdd = nil
   end
 end
-Script.serveFunction('CSK_DeviceNetworkConfig.setDns', setDns)
+Script.serveFunction('CSK_DeviceNetworkConfig.setDNS', setDNS)
 
--- Selected nameserver row in the table
-local function selectedDns(selectedRow)
+local function selectDNSViaUI(selectedRow)
   if selectedRow ~= "" then
     local l_data = deviceNetworkConfig_Model.helperFuncs.json.decode(selectedRow)
     for _,v in pairs(getNameserverList()) do
@@ -309,9 +306,9 @@ local function selectedDns(selectedRow)
 
   -- Workaround to reset the selection of the DNS in the UI table
   Script.sleep(100)
-  Script.notifyEvent("DeviceNetworkConfig_OnNewDns", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDNS", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
 end
-Script.serveFunction('CSK_DeviceNetworkConfig.selectedDns', selectedDns)
+Script.serveFunction('CSK_DeviceNetworkConfig.selectDNSViaUI', selectDNSViaUI)
 
 --- Function to send all relevant values to UI on resume
 local function handleOnExpiredTmrDeviceNetworkConfig()
@@ -329,7 +326,7 @@ local function handleOnExpiredTmrDeviceNetworkConfig()
   Script.notifyEvent("DeviceNetworkConfig_OnNewDefaultGateway", '-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceChoice",'-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
-  Script.notifyEvent("DeviceNetworkConfig_OnNewDns", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDNS", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
 
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusLoadParameterOnReboot", deviceNetworkConfig_Model.parameterLoadOnReboot)
   Script.notifyEvent("DeviceNetworkConfig_OnPersistentDataModuleAvailable", deviceNetworkConfig_Model.persistentModuleAvailable)
@@ -468,44 +465,33 @@ local function handleOnLinkActiveChanged(ifName, linkActive)
 end
 Script.register("Ethernet.Interface.OnLinkActiveChanged", handleOnLinkActiveChanged)
 
---**************************************************************************
---**********************End Function Scope *********************************
---**************************************************************************
-
 -- **********************************************************************************
--- Start of functions for PersistentData module usage
+-- Following function can be adapted for CSK_PersistentData module usage
 -- **********************************************************************************
 
--------------------------------------------------------------------------------------
--- Set name of the parameter set
----@param name string
 local function setParameterName(name)
   _G.logger:info(NAME_OF_MODULE .. ": Set parameter name: " .. tostring(name))
   deviceNetworkConfig_Model.parametersName = tostring(name)
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.setParameterName", setParameterName)
 
--------------------------------------------------------------------------------------
--- Send parameters
 local function sendParameters()
   if deviceNetworkConfig_Model.persistentModuleAvailable then
     CSK_PersistentData.addParameter(deviceNetworkConfig_Model.helperFuncs.convertTable2Container(deviceNetworkConfig_Model.parameters), deviceNetworkConfig_Model.parametersName)
     CSK_PersistentData.setModuleParameterName(NAME_OF_MODULE, deviceNetworkConfig_Model.parametersName, deviceNetworkConfig_Model.parameterLoadOnReboot)
-    _G.logger:info(NAME_OF_MODULE .. ": Send parameters with name '" .. deviceNetworkConfig_Model.parametersName .. "' to PersistentData module.")
+    _G.logger:info(NAME_OF_MODULE .. ": Send DeviceNetworkConfig parameters with name '" .. deviceNetworkConfig_Model.parametersName .. "' to CSK_PersistentData module.")
     CSK_PersistentData.saveData()
   else
-    _G.logger:warning(NAME_OF_MODULE .. ": PersistentData Module not available.")
+    _G.logger:warning(NAME_OF_MODULE .. ": CSK_PersistentData Module not available.")
   end
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.sendParameters", sendParameters)
 
--------------------------------------------------------------------------------------
--- Load parameters
 local function loadParameters()
   if deviceNetworkConfig_Model.persistentModuleAvailable then
     local data = CSK_PersistentData.getParameter(deviceNetworkConfig_Model.parametersName)
     if data then
-      _G.logger:info(NAME_OF_MODULE .. ": Loaded parameters from PersistentData module.")
+      _G.logger:info(NAME_OF_MODULE .. ": Loaded parameters from CSK_PersistentData module.")
       deviceNetworkConfig_Model.parameters = deviceNetworkConfig_Model.helperFuncs.convertContainer2Table(data)
 
       -- Load nameservers
@@ -513,32 +499,32 @@ local function loadParameters()
 
       CSK_DeviceNetworkConfig.pageCalled()
     else
-      _G.logger:warning(NAME_OF_MODULE .. ": Loading parameters from PersistentData module did not work.")
+      _G.logger:warning(NAME_OF_MODULE .. ": Loading parameters from CSK_PersistentData module did not work.")
     end
   else
-    _G.logger:warning(NAME_OF_MODULE .. ": PersistentData Module not available.")
+    _G.logger:warning(NAME_OF_MODULE .. ": CSK_PersistentData Module not available.")
   end
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.loadParameters", loadParameters)
 
--------------------------------------------------------------------------------------
--- Set parameter load on reboot
----@param status bool
 local function setLoadOnReboot(status)
   deviceNetworkConfig_Model.parameterLoadOnReboot = status
   _G.logger:info(NAME_OF_MODULE .. ": Set new status to load setting on reboot: " .. tostring(status))
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.setLoadOnReboot", setLoadOnReboot)
 
--------------------------------------------------------------------------------------
--- Handle event "OnInitialDataLoaded"
+--- Function to react on initial load of persistent parameters
 local function handleOnInitialDataLoaded()
+
   if string.sub(CSK_PersistentData.getVersion(), 1, 1) == '1' then
+
     _G.logger:warning(NAME_OF_MODULE .. ': CSK_PersistentData module is too old and will not work. Please update CSK_PersistentData module.')
+
     deviceNetworkConfig_Model.persistentModuleAvailable = false
   else
 
     local parameterName, loadOnReboot = CSK_PersistentData.getModuleParameterName(NAME_OF_MODULE)
+
     if parameterName then
       deviceNetworkConfig_Model.parametersName = parameterName
       deviceNetworkConfig_Model.parameterLoadOnReboot = loadOnReboot
@@ -552,4 +538,12 @@ local function handleOnInitialDataLoaded()
 end
 Script.register("CSK_PersistentData.OnInitialDataLoaded", handleOnInitialDataLoaded)
 
+-- *************************************************
+-- END of functions for CSK_PersistentData module usage
+-- *************************************************
+
 return setDeviceNetworkConfig_Model_Handle
+
+--**************************************************************************
+--**********************End Function Scope *********************************
+--**************************************************************************

@@ -170,53 +170,66 @@
 							</crown-binding>
 						</davinci-button>
 						<h3 id="Heading31">DNS settings</h3>
-                         <p>To delete a nameserver, please select a DNS entry from the list and press "Remove".<br>
+                        <p>To delete a nameserver, please select a DNS entry from the list and press "Remove".<br>
                                     A maximum of three nameserves can be added.<br>
                                     Nameservers that are added automatically via DHCP cannot be deleted.<br><br>
                                     <b>Please note that the DNS entries can only be persisted, if the app "CSK_Module_PersistentData" is loaded.</b></p>
-						<layout-column id="ColumnLayout4">
-							<layout-row id="RowLayout10">
-								<davinci-text-field id="TF_DnsEntry" type="text"
-									label="IP address of the DNS" pattern="">
-									<crown-on property="error"
-										crown-event="CSK_DeviceNetworkConfig/OnDnsIpError">
-									</crown-on>
-									<crown-set event="change"
-										crown-function="CSK_DeviceNetworkConfig/setDns"
-										protocol="crownMSGPACK" crown-path="dns">
-									</crown-set>
-								</davinci-text-field>
-								<davinci-button id="BTN_AddDns" type="primary" icon-position="append"
-									title="Add the defined DNS" icon="image/control_point">
-									<span>Add</span>
-									<crown-set event="submit"
-										crown-function="CSK_DeviceNetworkConfig/addDns"
-										protocol="crownMSGPACK">
-									</crown-set>
-								</davinci-button>
-							</layout-row>
-							<layout-row id="RowLayout11" style="align-items: flex-end">
-								<curie-table id="DT_DnsList" select-mode="highlight_row" selectable>
-									<curie-table-column id="dns" header="Nameserver">
-									</curie-table-column>
-									<crown-set event="row-selected"
-										crown-function="CSK_DeviceNetworkConfig/selectedDns"
-										protocol="crownMSGPACK" crown-path="selectedRow">
-									</crown-set>
-									<crown-on property="data"
-										crown-event="CSK_DeviceNetworkConfig/OnNewDns">
-									</crown-on>
-								</curie-table>
-								<davinci-button id="BTN_RemoveDns" type="primary"
-									icon-position="append" title="Remove the selected DNS entry">
-									<span>Remove</span>
-									<crown-set event="submit"
-										crown-function="CSK_DeviceNetworkConfig/removeDns"
-										protocol="crownMSGPACK">
-									</crown-set>
-								</davinci-button>
-							</layout-row>
-						</layout-column>
+						<layout-row id="RowLayout12">
+							<layout-column id="ColumnLayout4" style="align-items: stretch">
+								<layout-row id="RowLayout10">
+									<layout-column id="ColumnLayout11" style="align-items: stretch">
+										<davinci-text-field id="TF_DnsEntry" type="text"
+											label="IP address of the DNS" pattern="">
+											<crown-on property="error"
+												crown-event="CSK_DeviceNetworkConfig/OnDNSIPError">
+											</crown-on>
+											<crown-set event="change"
+												crown-function="CSK_DeviceNetworkConfig/setDNS"
+												protocol="crownMSGPACK" crown-path="dns">
+											</crown-set>
+										</davinci-text-field>
+									</layout-column>
+									<layout-column id="ColumnLayout12" style="align-items: stretch">
+										<davinci-button id="BTN_AddDns" type="primary" icon-position="append"
+											title="Add the defined DNS" icon="image/control_point">
+											<span>Add</span>
+											<crown-set event="submit"
+												crown-function="CSK_DeviceNetworkConfig/addDNS"
+												protocol="crownMSGPACK">
+											</crown-set>
+										</davinci-button>
+									</layout-column>
+								</layout-row>
+								<layout-row id="RowLayout11" style="align-items: flex-end">
+									<layout-column id="ColumnLayout5" style="align-items: stretch">
+										<curie-table id="DT_DnsList" select-mode="highlight_row" selectable>
+											<curie-table-column id="dns" header="Nameserver">
+											</curie-table-column>
+											<crown-set event="row-selected"
+												crown-function="CSK_DeviceNetworkConfig/selectDNSViaUI"
+												protocol="crownMSGPACK" crown-path="selectedRow">
+											</crown-set>
+											<crown-on property="data"
+												crown-event="CSK_DeviceNetworkConfig/OnNewDNS">
+											</crown-on>
+										</curie-table>
+									</layout-column>
+									<layout-column id="ColumnLayout6" style="align-items: stretch">
+										<davinci-button id="BTN_RemoveDns" type="primary"
+											icon-position="append" title="Remove the selected DNS entry">
+											<span>Remove</span>
+											<crown-set event="submit"
+												crown-function="CSK_DeviceNetworkConfig/removeDNS"
+												protocol="crownMSGPACK">
+											</crown-set>
+										</davinci-button>
+									</layout-column>
+								</layout-row>
+							</layout-column>
+							<layout-column id="ColumnLayout3"
+								style="align-items: stretch; flex-grow: 2">
+							</layout-column>
+						</layout-row>
 						<h3 id="Heading33">Tools</h3>
 						<layout-row id="RowLayout3">
 							<davinci-text-field id="TF_PingIP" type="text" label="Ping"
