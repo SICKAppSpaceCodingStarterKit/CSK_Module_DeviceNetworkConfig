@@ -13,6 +13,7 @@ For further information check out the [documentation](./docu/CSK_Module_DeviceNe
 
 Tested on:  
 1. SIM1012        - Firmware 2.3.0
+2. SIM1000fx      - Firmware 1.7.2
 
 >**Please note**
 > This application / module is part of the SICK AppSpace Coding Starter Kit developing approach.  
