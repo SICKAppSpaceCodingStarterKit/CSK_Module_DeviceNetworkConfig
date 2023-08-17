@@ -4,15 +4,14 @@ Module to provide ethernet setup functionality.
 ![plot](./docu/media/UI_Screenshot.png)
 
 ## How to Run
-Please checkout the project and run the Powershell script "createProject.ps1". The script creates a project folder that can be opened with AppStudio. New versions of the dependent modules can also be loaded into the project via the script.
-
 The app includes an intuitive GUI to setup the ethernet setup of the device.  
-For further information check out the [documentation](./docu/CSK_Module_DeviceNetworkConfig.html) in the folder "docu".
+For further information check out the [documentation](https://raw.githack.com/SICKAppSpaceCodingStarterKit/CSK_Module_DeviceNetworkConfig/main/docu/CSK_Module_DeviceNetworkConfig.html) in the folder "docu".
 
 ## Information
 
 Tested on:  
 1. SIM1012        - Firmware 2.3.0
+2. SIM1000fx      - Firmware 1.7.2
 
 >**Please note**
 > This application / module is part of the SICK AppSpace Coding Starter Kit developing approach.  
@@ -21,7 +20,6 @@ In general it is not neccessary to code this way, but the architecture of this a
 Please check the [documentation](https://github.com/SICKAppSpaceCodingStarterKit/.github/blob/main/docu/SICKAppSpaceCodingStarterKit_Documentation.md) of CSK for further information.
 
 ### Dependencies
-Following CSK modules are used for this application via Git subtrees and should NOT be further developed within this repository (see [contribution guideline](https://github.com/SICKAppSpaceCodingStarterKit/.github/blob/main/Contribution_Guideline.md) of this GitHub organization):  
 
 |Module|Version|Remark
 |--|--|--|

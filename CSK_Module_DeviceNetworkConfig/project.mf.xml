@@ -115,7 +115,7 @@ See following descriptions of events/functions regarding further information.
                     <desc>Notify status if features of CSK_PersistendData module are available.</desc>
                     <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
-		<event name="OnDNSIPError">
+                <event name="OnDNSIPError">
                     <trait>released</trait>
                     <desc>Highlights the DNS 'IP' in UI if format of IP is not correct.</desc>
                     <param desc="Status" multiplicity="1" name="isError" type="bool"/>
