@@ -29,19 +29,29 @@ deviceNetworkConfig_Model.helperFuncs = require('Configuration/DeviceNetworkConf
 deviceNetworkConfig_Model.interfacesTable = {} -- table to hold setup of available ethernet interfaces
 deviceNetworkConfig_Model.ping_ip_adress = "" -- IP address to check for ping
 
+deviceNetworkConfig_Model.styleForUI = 'None' -- Optional parameter to set UI style
+deviceNetworkConfig_Model.version = Engine.getCurrentAppVersion() -- Version of module
+
 deviceNetworkConfig_Model.parameters = {}
 deviceNetworkConfig_Model.parameters.nameservers = {}; -- Name servers (DNS)
 
 -- Default values for persistent data
 -- If available, following values will be updated from data of CSK_PersistentData module (check CSK_PersistentData module for this)
 deviceNetworkConfig_Model.parametersName = 'CSK_DeviceNetworkConfig_Parameter' -- name of parameter dataset to be used for this module
-deviceNetworkConfig_Model.parameterLoadOnReboot = true -- Status if parameter dataset should be loaded on app/device reboot
+deviceNetworkConfig_Model.parameterLoadOnReboot = false -- Status if parameter dataset should be loaded on app/device reboot
 
 --**************************************************************************
 --********************** End Global Scope **********************************
 --**************************************************************************
 --**********************Start Function Scope *******************************
 --**************************************************************************
+
+--- Function to react on UI style change
+local function handleOnStyleChanged(theme)
+  deviceNetworkConfig_Model.styleForUI = theme
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusCSKStyle", deviceNetworkConfig_Model.styleForUI)
+end
+Script.register('CSK_PersistentData.OnNewStatusCSKStyle', handleOnStyleChanged)
 
 ---Function to get current setting of ethernet interfaces
 local function refreshInterfaces()

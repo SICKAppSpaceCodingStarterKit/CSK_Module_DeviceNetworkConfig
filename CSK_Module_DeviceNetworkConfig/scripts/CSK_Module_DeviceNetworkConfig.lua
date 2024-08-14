@@ -26,6 +26,12 @@
 --**********************Start Global Scope *********************************
 --**************************************************************************
 -----------------------------------------------------------
+-- If app property "LuaLoadAllEngineAPI" is FALSE, use this to load and check for required APIs
+-- This can improve performance of garbage collection
+_G.availableAPIs = require('Configuration.DeviceNetworkConfig.helper.checkAPIs') -- can be used to adjust function scope of the module related on available APIs of the device
+-----------------------------------------------------------
+--**************************************************************************
+-----------------------------------------------------------
 -- Logger
 _G.logger = Log.SharedLogger.create('ModuleLogger')
 _G.logHandle = Log.Handler.create()
@@ -39,12 +45,17 @@ _G.logHandle:applyConfig()
 -- Check this script regarding DeviceNetworkConfig_Model parameters and functions
 _G.deviceNetworkConfig_Model = require('Configuration/DeviceNetworkConfig/DeviceNetworkConfig_Model')
 
+if _G.availableAPIs.default == false or _G.availableAPIs.specific == false then
+  _G.logger:warning("CSK_DeviceNetworkConfig: Relevant CROWN(s) not available on device. Module is not supported...")
+else
+  _G.deviceNetworkConfig_Model.refreshInterfaces()
+end
+
 --**************************************************************************
 --**********************End Global Scope ***********************************
 --**************************************************************************
 --**********************Start Function Scope *******************************
 --**************************************************************************
-_G.deviceNetworkConfig_Model.refreshInterfaces()
 
 --- Function to react on startup event of the app
 local function main()

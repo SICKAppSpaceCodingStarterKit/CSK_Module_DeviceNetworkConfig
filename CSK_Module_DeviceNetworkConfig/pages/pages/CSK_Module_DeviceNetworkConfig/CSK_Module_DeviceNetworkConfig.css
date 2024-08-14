@@ -1,10 +1,56 @@
-.myCustomFrame_CSK_Module_DeviceNetworkConfig {
-  border-style: solid;
-  border-width: 1px;
-  border-color: grey;
-  margin: 6px;
-}
-
 .myCustomMinWidth_CSK_Module_DeviceNetworkConfig {
   min-width: 60px;
+}
+
+.myCustomSpacerVert10_CSK_Module_DeviceNetworkConfig {
+  min-height: 10px;
+}
+
+.myCustomSpacerVert20_CSK_Module_DeviceNetworkConfig {
+  min-height: 20px;
+}
+
+.myCustomFrameNoColor_CSK_Module_DeviceNetworkConfig {
+  margin: 6px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 0px;
+  border-color: 007CC1;
+  background-color: white;
+}
+
+.myCustomFrame_CSK_Module_DeviceNetworkConfig {
+  margin: 6px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #007CC1;
+  background-color: white;
+}
+
+.myCustomLabel_CSK_Module_DeviceNetworkConfig {
+  font-size:30px;
+  color: grey;
+  margin-top: 10px;
+}
+
+.myCustomFrameLabel_CSK_Module_DeviceNetworkConfig {
+  background: white;
+  position:relative;
+  top: calc(-1.2rem);
+  left: calc(1rem);
+  font-size: medium;
+}
+
+.myCustomBorderBottom_CSK_Module_DeviceNetworkConfig {
+  border-bottom: 1px solid lightgray;
+  margin-inline: calc(1rem);
+}
+
+.myCustomBackground_CSK_Module_DeviceNetworkConfig {
+}
+
+.myCustomButton_CSK_Module_DeviceNetworkConfig {
+  border-radius: 30px;
+  padding-right: 0px;
 }

@@ -8,7 +8,7 @@
 --**************************************************************************
 --************************ Start Global Scope ******************************
 --**************************************************************************
-local NAME_OF_MODULE = 'CSK_DeviceNetworkConfig'
+local nameOfModule = 'CSK_DeviceNetworkConfig'
 
 -- Timer to update UI via events after page was loaded
 local tmrDeviceNetworkConfig = Timer.create()
@@ -31,6 +31,11 @@ local jsonInterfaceListContent -- available interfaces as JSON
 local deviceNetworkConfig_Model
 
 -- ************************ UI Events Start ********************************
+
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusModuleVersion', 'DeviceNetworkConfig_OnNewStatusModuleVersion')
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusCSKStyle', 'DeviceNetworkConfig_OnNewStatusCSKStyle')
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusModuleIsActive', 'DeviceNetworkConfig_OnNewStatusModuleIsActive')
+
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewStatusLoadParameterOnReboot", "DeviceNetworkConfig_OnNewStatusLoadParameterOnReboot")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnPersistentDataModuleAvailable", "DeviceNetworkConfig_OnPersistentDataModuleAvailable")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewParameterName", "DeviceNetworkConfig_OnNewParameterName")
@@ -169,17 +174,23 @@ end
 -- Get a list of all configured nameservers
 local function getNameserverList()
   local retValue = {}
-  for _,v in pairs(Ethernet.DNS.getNameservers()) do
-    -- To enable the display in the dynamic table using the keyword "dns"
-    ---@diagnostic disable-next-line: param-type-mismatch
-    table.insert(retValue, {dns= v})
+  if _G.availableAPIs.specific == true then
+    for _,v in pairs(Ethernet.DNS.getNameservers()) do
+      -- To enable the display in the dynamic table using the keyword "dns"
+      ---@diagnostic disable-next-line: param-type-mismatch
+      table.insert(retValue, {dns= v})
+    end
   end
 
-  -- If only 127.0.0.1 is use, hide it
+  -- If only 127.0.0.1 is used, hide it
   if #retValue == 1 then
     if retValue[1].dns == "127.0.0.1" then
       retValue = {}
     end
+  end
+
+  if #retValue == 0 then
+    table.insert(retValue, {dns= '-'})
   end
 
   return retValue
@@ -240,7 +251,7 @@ local function updateNameservers(nameserverList)
   for _,ip in pairs(l_cleanedList) do
     l_statusOutput = l_statusOutput .. ip .. " "
   end
-  _G.logger:info(NAME_OF_MODULE .. ": Added nameservers (" .. l_statusOutput ..")")
+  _G.logger:fine(nameOfModule .. ": Added nameservers (" .. l_statusOutput ..")")
 
   -- Store nameserver entries permanently
   CSK_DeviceNetworkConfig.sendParameters()
@@ -312,9 +323,16 @@ Script.serveFunction('CSK_DeviceNetworkConfig.selectDNSViaUI', selectDNSViaUI)
 
 --- Function to send all relevant values to UI on resume
 local function handleOnExpiredTmrDeviceNetworkConfig()
+
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusModuleVersion", 'v' .. deviceNetworkConfig_Model.version)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusCSKStyle", deviceNetworkConfig_Model.styleForUI)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusModuleIsActive", _G.availableAPIs.default and _G.availableAPIs.specific)
+
   updateUserLevel()
 
-  refresh()
+  if _G.availableAPIs.default and _G.availableAPIs.specific then
+    refresh()
+  end
   currentInterfaceName  = '-'
   currentIP             = '-'
   currentSubnet         = '-'
@@ -443,10 +461,10 @@ local function applyConfig()
   if deviceNetworkConfig_Model.helperFuncs.checkIP(currentIP) and deviceNetworkConfig_Model.helperFuncs.checkIP(currentSubnet) and deviceNetworkConfig_Model.helperFuncs.checkIP(currentGateway) or currentGateway == '' then
     Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'processing')
     if currentDHCP == true then
-      _G.logger:info(NAME_OF_MODULE .. ": Applying device's Ethernet config: \n  Interface " .. currentInterfaceName .. " \n  DHCP: " .. tostring(currentDHCP))
+      _G.logger:info(nameOfModule .. ": Applying device's Ethernet config: \n  Interface " .. currentInterfaceName .. " \n  DHCP: " .. tostring(currentDHCP))
       deviceNetworkConfig_Model.applyEthernetConfig(currentInterfaceName, currentDHCP, nil, nil, nil)
     else
-      _G.logger:info(NAME_OF_MODULE .. ": Applying device's Ethernet config: \n  Interface " .. currentInterfaceName .. " \n  DHCP: " .. tostring(currentDHCP) .. " \n  IP: " .. currentIP.. " \n  Subnet: " .. currentSubnet .. " \n  Gateway: " .. currentGateway)
+      _G.logger:info(nameOfModule .. ": Applying device's Ethernet config: \n  Interface " .. currentInterfaceName .. " \n  DHCP: " .. tostring(currentDHCP) .. " \n  IP: " .. currentIP.. " \n  Subnet: " .. currentSubnet .. " \n  Gateway: " .. currentGateway)
       deviceNetworkConfig_Model.applyEthernetConfig(currentInterfaceName, currentDHCP, currentIP, currentSubnet, currentGateway)
     end
     refresh()
@@ -454,35 +472,42 @@ local function applyConfig()
   else
     Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'error')
   end
-  _G.logger:info(NAME_OF_MODULE .. ": Applying device's Ethernet config finished")
+  _G.logger:info(nameOfModule .. ": Applying device's Ethernet config finished")
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.applyConfig", applyConfig)
 
 --- Function to react 'Ethernet.Interface.OnLinkActiveChanged' event
 local function handleOnLinkActiveChanged(ifName, linkActive)
   refresh()
-  _G.logger:info(NAME_OF_MODULE .. ': New link status = ' .. tostring(linkActive) .. ' on interface ' .. ifName)
+  _G.logger:fine(nameOfModule .. ': New link status = ' .. tostring(linkActive) .. ' on interface ' .. ifName)
 end
 Script.register("Ethernet.Interface.OnLinkActiveChanged", handleOnLinkActiveChanged)
+
+local function getParameters()
+  return deviceNetworkConfig_Model.helperFuncs.json.encode(deviceNetworkConfig_Model.parameters)
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.getParameters', getParameters)
 
 -- **********************************************************************************
 -- Following function can be adapted for CSK_PersistentData module usage
 -- **********************************************************************************
 
 local function setParameterName(name)
-  _G.logger:info(NAME_OF_MODULE .. ": Set parameter name: " .. tostring(name))
+  _G.logger:fine(nameOfModule .. ": Set parameter name: " .. tostring(name))
   deviceNetworkConfig_Model.parametersName = tostring(name)
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.setParameterName", setParameterName)
 
-local function sendParameters()
+local function sendParameters(noDataSave)
   if deviceNetworkConfig_Model.persistentModuleAvailable then
     CSK_PersistentData.addParameter(deviceNetworkConfig_Model.helperFuncs.convertTable2Container(deviceNetworkConfig_Model.parameters), deviceNetworkConfig_Model.parametersName)
-    CSK_PersistentData.setModuleParameterName(NAME_OF_MODULE, deviceNetworkConfig_Model.parametersName, deviceNetworkConfig_Model.parameterLoadOnReboot)
-    _G.logger:info(NAME_OF_MODULE .. ": Send DeviceNetworkConfig parameters with name '" .. deviceNetworkConfig_Model.parametersName .. "' to CSK_PersistentData module.")
-    CSK_PersistentData.saveData()
+    CSK_PersistentData.setModuleParameterName(nameOfModule, deviceNetworkConfig_Model.parametersName, deviceNetworkConfig_Model.parameterLoadOnReboot)
+    _G.logger:fine(nameOfModule .. ": Send DeviceNetworkConfig parameters with name '" .. deviceNetworkConfig_Model.parametersName .. "' to CSK_PersistentData module.")
+    if not noDataSave then
+      CSK_PersistentData.saveData()
+    end
   else
-    _G.logger:warning(NAME_OF_MODULE .. ": CSK_PersistentData Module not available.")
+    _G.logger:warning(nameOfModule .. ": CSK_PersistentData Module not available.")
   end
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.sendParameters", sendParameters)
@@ -491,49 +516,55 @@ local function loadParameters()
   if deviceNetworkConfig_Model.persistentModuleAvailable then
     local data = CSK_PersistentData.getParameter(deviceNetworkConfig_Model.parametersName)
     if data then
-      _G.logger:info(NAME_OF_MODULE .. ": Loaded parameters from CSK_PersistentData module.")
+      _G.logger:info(nameOfModule .. ": Loaded parameters from CSK_PersistentData module.")
       deviceNetworkConfig_Model.parameters = deviceNetworkConfig_Model.helperFuncs.convertContainer2Table(data)
 
       -- Load nameservers
       updateNameservers(deviceNetworkConfig_Model.parameters.nameservers)
 
       CSK_DeviceNetworkConfig.pageCalled()
+      return true
     else
-      _G.logger:warning(NAME_OF_MODULE .. ": Loading parameters from CSK_PersistentData module did not work.")
+      _G.logger:warning(nameOfModule .. ": Loading parameters from CSK_PersistentData module did not work.")
+      return false
     end
   else
-    _G.logger:warning(NAME_OF_MODULE .. ": CSK_PersistentData Module not available.")
+    _G.logger:warning(nameOfModule .. ": CSK_PersistentData Module not available.")
+    return false
   end
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.loadParameters", loadParameters)
 
 local function setLoadOnReboot(status)
   deviceNetworkConfig_Model.parameterLoadOnReboot = status
-  _G.logger:info(NAME_OF_MODULE .. ": Set new status to load setting on reboot: " .. tostring(status))
+  _G.logger:fine(nameOfModule .. ": Set new status to load setting on reboot: " .. tostring(status))
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.setLoadOnReboot", setLoadOnReboot)
 
 --- Function to react on initial load of persistent parameters
 local function handleOnInitialDataLoaded()
 
-  if string.sub(CSK_PersistentData.getVersion(), 1, 1) == '1' then
+  if _G.availableAPIs.default and _G.availableAPIs.specific then
+    _G.logger:fine(nameOfModule .. ': Try to initially load parameter from CSK_PersistentData module.')
+    if string.sub(CSK_PersistentData.getVersion(), 1, 1) == '1' then
 
-    _G.logger:warning(NAME_OF_MODULE .. ': CSK_PersistentData module is too old and will not work. Please update CSK_PersistentData module.')
+      _G.logger:warning(nameOfModule .. ': CSK_PersistentData module is too old and will not work. Please update CSK_PersistentData module.')
 
-    deviceNetworkConfig_Model.persistentModuleAvailable = false
-  else
+      deviceNetworkConfig_Model.persistentModuleAvailable = false
+    else
 
-    local parameterName, loadOnReboot = CSK_PersistentData.getModuleParameterName(NAME_OF_MODULE)
+      local parameterName, loadOnReboot = CSK_PersistentData.getModuleParameterName(nameOfModule)
 
-    if parameterName then
-      deviceNetworkConfig_Model.parametersName = parameterName
-      deviceNetworkConfig_Model.parameterLoadOnReboot = loadOnReboot
+      if parameterName then
+        deviceNetworkConfig_Model.parametersName = parameterName
+        deviceNetworkConfig_Model.parameterLoadOnReboot = loadOnReboot
+      end
+
+      if deviceNetworkConfig_Model.parameterLoadOnReboot then
+        loadParameters()
+      end
+      Script.notifyEvent('DeviceNetworkConfig_OnDataLoadedOnReboot')
     end
-
-    if deviceNetworkConfig_Model.parameterLoadOnReboot then
-      loadParameters()
-    end
-    Script.notifyEvent('DeviceNetworkConfig_OnDataLoadedOnReboot')
   end
 end
 Script.register("CSK_PersistentData.OnInitialDataLoaded", handleOnInitialDataLoaded)
