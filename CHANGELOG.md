@@ -14,6 +14,9 @@ All notable changes to this project will be documented in this file.
 - 'sendParameters' can control if sent data should be saved directly by CSK_Module_PersistentData
 - Added browser tab information
 
+### Bugfix
+- Error while trying to set nameserver if running on emulator or SAE
+
 ## Release 2.1.0
 
 ### Improvements

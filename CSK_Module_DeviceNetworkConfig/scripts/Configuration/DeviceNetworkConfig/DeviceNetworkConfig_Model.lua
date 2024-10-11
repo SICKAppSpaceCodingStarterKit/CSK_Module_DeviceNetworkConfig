@@ -32,6 +32,14 @@ deviceNetworkConfig_Model.ping_ip_adress = "" -- IP address to check for ping
 deviceNetworkConfig_Model.styleForUI = 'None' -- Optional parameter to set UI style
 deviceNetworkConfig_Model.version = Engine.getCurrentAppVersion() -- Version of module
 
+-- Get device type
+local typeName = Engine.getTypeName()
+if typeName == 'AppStudioEmulator' or typeName == 'SICK AppEngine' then
+  deviceNetworkConfig_Model.deviceType = 'AppEngine'
+else
+  deviceNetworkConfig_Model.deviceType = string.sub(typeName, 1, 7)
+end
+
 deviceNetworkConfig_Model.parameters = {}
 deviceNetworkConfig_Model.parameters.nameservers = {}; -- Name servers (DNS)
 

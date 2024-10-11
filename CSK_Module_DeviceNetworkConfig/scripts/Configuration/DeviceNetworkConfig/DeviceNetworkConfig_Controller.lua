@@ -488,6 +488,11 @@ local function getParameters()
 end
 Script.serveFunction('CSK_DeviceNetworkConfig.getParameters', getParameters)
 
+local function getStatusModuleActive()
+  return _G.availableAPIs.default and _G.availableAPIs.specific
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.getStatusModuleActive', getStatusModuleActive)
+
 -- **********************************************************************************
 -- Following function can be adapted for CSK_PersistentData module usage
 -- **********************************************************************************
@@ -520,7 +525,9 @@ local function loadParameters()
       deviceNetworkConfig_Model.parameters = deviceNetworkConfig_Model.helperFuncs.convertContainer2Table(data)
 
       -- Load nameservers
-      updateNameservers(deviceNetworkConfig_Model.parameters.nameservers)
+      if deviceNetworkConfig_Model.deviceType ~= 'AppEngine' then
+        updateNameservers(deviceNetworkConfig_Model.parameters.nameservers)
+      end
 
       CSK_DeviceNetworkConfig.pageCalled()
       return true
