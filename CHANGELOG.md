@@ -10,9 +10,12 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - New UI design available (e.g. selectable via CSK_Module_PersistentData v4.1.0 or higher), see 'OnNewStatusCSKStyle'
+- Show timestamp info after ping
+- Check interface selection within UI table
 - 'loadParameters' returns its success
 - 'sendParameters' can control if sent data should be saved directly by CSK_Module_PersistentData
 - Added browser tab information
+- Minor UI changes
 
 ### Bugfix
 - Error while trying to set nameserver if running on emulator or SAE

@@ -50,8 +50,12 @@ end
 
 --- Function to create a json string out of a table content
 ---@param content string[] Content to use
+---@param selection int? Currently selected parameter
 ---@return string jsonstring Json list of entries
-local function createJsonList(content)
+local function createJsonList(content, selection)
+  if selection == nil then
+    selection = 0
+  end
   local contentList = {}
   if content == nil then
     contentList = {
@@ -68,6 +72,10 @@ local function createJsonList(content)
   else
       local sortedTableKeys = getSortedTableKeys(content)
       for _, tableKey in ipairs(sortedTableKeys) do
+        local isSelected = false
+        if tableKey == selection then
+          isSelected = true
+        end
         table.insert(contentList, 
                       { 
                         Interface       = content[tableKey].interfaceName,
@@ -76,7 +84,8 @@ local function createJsonList(content)
                         DefaultGateway  = content[tableKey].defaultGateway,
                         DHCP            = content[tableKey].dhcp,
                         MACAddress      = content[tableKey].macAddress,
-                        Connected       = content[tableKey].isLinkActive
+                        Connected       = content[tableKey].isLinkActive,
+                        selected        = isSelected
                       }
                     )
       end

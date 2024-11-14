@@ -7,7 +7,7 @@
             <layout-column id="ColumnLayout17" style="align-items: stretch">
                 <layout-row id="RowLayout14" style="align-items: baseline">
                     <davinci-value-display id="VD_Title" class="myCustomLabel_CSK_Module_DeviceNetworkConfig"
-                        value="Network Configuration">
+                        value="Device Network Configuration">
                     </davinci-value-display>
                     <davinci-value-display id="VD_Version">
                         <crown-edpws-binding property="value" name="CSK_DeviceNetworkConfig/OnNewStatusModuleVersion"
@@ -297,11 +297,12 @@
 															A maximum of three nameserves can be added. Nameservers that are added automatically via DHCP cannot be deleted.
 															<br>
 															Please note that the DNS entries can only be persistent, if the app 'CSK_Module_PersistentData' is loaded.
-															<br>
-															Nameservers that are added automatically via DHCP cannot be deleted.
 														</span>
                                                     </davinci-callout>
                                                 </davinci-collapse>
+												<layout-row id="RowLayout21"
+													class="myCustomSpacerVert10_CSK_Module_DeviceNetworkConfig">
+												</layout-row>
                                             </layout-column>
                                         </layout-row>
                                     </layout-column>

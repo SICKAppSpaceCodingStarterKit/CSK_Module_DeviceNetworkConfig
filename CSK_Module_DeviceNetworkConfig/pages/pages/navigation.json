@@ -1,14 +1,4 @@
 {
-  "version": "1.0",
-  "pages": [
-    {
-      "category": "CSK Module Device Network Config",
-      "pages": [
-        {
-          "path": "CSK_Module_DeviceNetworkConfig/CSK_Module_DeviceNetworkConfig.html",
-          "name": "Network Configuration"
-        }
-      ]
-    }
-  ]
+  "version": "1.0", 
+  "pages": []
 }

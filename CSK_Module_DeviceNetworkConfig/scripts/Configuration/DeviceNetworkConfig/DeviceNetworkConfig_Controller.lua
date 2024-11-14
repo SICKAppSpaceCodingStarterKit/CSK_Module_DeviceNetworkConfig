@@ -151,7 +151,7 @@ end
 
 local function refresh()
   interfacesTable = deviceNetworkConfig_Model.refreshInterfaces()
-  jsonInterfaceListContent = deviceNetworkConfig_Model.helperFuncs.createJsonList(interfacesTable)
+  jsonInterfaceListContent = deviceNetworkConfig_Model.helperFuncs.createJsonList(interfacesTable, selectedInterfaceName)
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceTable", jsonInterfaceListContent)
   checkWhatToDisable()
 end
@@ -331,6 +331,7 @@ local function handleOnExpiredTmrDeviceNetworkConfig()
   updateUserLevel()
 
   if _G.availableAPIs.default and _G.availableAPIs.specific then
+    selectedInterfaceName = ''
     refresh()
   end
   currentInterfaceName  = '-'
@@ -363,14 +364,54 @@ local function pageCalled()
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.pageCalled", pageCalled)
 
+--- Function to check if selection in UIs DynamicTable can find related pattern
+---@param selection string Full text of selection
+---@param pattern string Pattern to search for
+---@param findEnd bool Find end after pattern
+---@return string? Success if pattern was found or even postfix after pattern till next quotation marks if findEnd was set to TRUE
+local function checkSelection(selection, pattern, findEnd)
+  if selection ~= "" then
+    local _, pos = string.find(selection, pattern)
+    if pos == nil then
+      return nil
+    else
+      if findEnd then
+        pos = tonumber(pos)
+        local endPos = string.find(selection, '"', pos+1)
+        if endPos then
+          local tempSelection = string.sub(selection, pos+1, endPos-1)
+          if tempSelection ~= nil and tempSelection ~= '-' then
+            return tempSelection
+          end
+        else
+          return nil
+        end
+      else
+        return 'true'
+      end
+    end
+  end
+  return nil
+end
+
 local function selectInterface(row_selected)
   Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
   Script.notifyEvent("DeviceNetworkConfig_OnIPError", false)
   Script.notifyEvent("DeviceNetworkConfig_OnSubnetError", false)
   Script.notifyEvent("DeviceNetworkConfig_OnGatewayError", false)
-  local _, pos1 = string.find(row_selected, '"Interface":"')
-  local pos2, _ = string.find(row_selected, '"', pos1+1)
-  local selectedInterfaceName = string.sub(row_selected, pos1+1, pos2-1)
+
+  local tempSelection = checkSelection(row_selected, '"Interface":"', true)
+  if tempSelection then
+    local isSelected = checkSelection(row_selected, '"selected":true', false)
+    if isSelected then
+      selectedInterfaceName = tempSelection
+    else
+      selectedInterfaceName = ''
+    end
+  else
+    selectedInterfaceName = ''
+  end
+
   if selectedInterfaceName ~= '-' and selectedInterfaceName ~= '' then
     currentIP             = interfacesTable[selectedInterfaceName].ipAddress
     currentSubnet         = interfacesTable[selectedInterfaceName].subnetMask
@@ -382,6 +423,12 @@ local function selectInterface(row_selected)
     Script.notifyEvent("DeviceNetworkConfig_OnNewDefaultGateway", currentGateway)
     Script.notifyEvent("DeviceNetworkConfig_OnNewDHCPStatus",     currentDHCP)
     Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceChoice",currentInterfaceName)
+  else
+    Script.notifyEvent("DeviceNetworkConfig_OnNewIP",             '-')
+    Script.notifyEvent("DeviceNetworkConfig_OnNewSubnetMask",     '-')
+    Script.notifyEvent("DeviceNetworkConfig_OnNewDefaultGateway", '-')
+    Script.notifyEvent("DeviceNetworkConfig_OnNewDHCPStatus",     false)
+    Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceChoice", '-')
   end
   if currentDHCP == true then
     Script.notifyEvent("DeviceNetworkConfig_OnIPDisabled", true)
@@ -389,6 +436,7 @@ local function selectInterface(row_selected)
     Script.notifyEvent("DeviceNetworkConfig_OnGatewayDisabled", true)
   end
   Script.sleep(100)
+  jsonInterfaceListContent = deviceNetworkConfig_Model.helperFuncs.createJsonList(interfacesTable, selectedInterfaceName)
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceTable", jsonInterfaceListContent)
   checkWhatToDisable()
 end
@@ -450,7 +498,12 @@ local function ping()
   local succes, time = Ethernet.ping(deviceNetworkConfig_Model.ping_ip_adress)
   Script.notifyEvent("DeviceNetworkConfig_OnNewPingResult", succes)
   if (time) then
-    Script.notifyEvent("DeviceNetworkConfig_OnNewPingDetails", tostring(time).." ms")
+    if availableAPIs.dateTime then
+      local currentTime = tostring(DateTime.getTimestamp())
+      Script.notifyEvent("DeviceNetworkConfig_OnNewPingDetails", tostring(time).." ms (at timestamp " .. currentTime .. ")")
+    else
+      Script.notifyEvent("DeviceNetworkConfig_OnNewPingDetails", tostring(time).." ms")
+    end
   else
     Script.notifyEvent("DeviceNetworkConfig_OnNewPingDetails", "No Connection")
   end
