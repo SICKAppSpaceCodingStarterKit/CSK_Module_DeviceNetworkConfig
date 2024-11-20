@@ -103,7 +103,8 @@ end
 
 --- Function to check what options should be adjustable in UI
 local function checkWhatToDisable()
-  if currentDHCP == true or (deviceNetworkConfig_Model.helperFuncs.checkIP(currentIP) and deviceNetworkConfig_Model.helperFuncs.checkIP(currentSubnet) and (deviceNetworkConfig_Model.helperFuncs.checkIP(currentGateway) or currentGateway == '')) then
+
+  if currentDHCP == true or (deviceNetworkConfig_Model.helperFuncs.checkIP(currentIP) and deviceNetworkConfig_Model.helperFuncs.checkIP(currentSubnet) and (deviceNetworkConfig_Model.helperFuncs.checkIP(currentGateway) or currentGateway == '')) and currentInterfaceName ~= '-'then
     Script.notifyEvent("DeviceNetworkConfig_OnApplyButtonDisabled", false)
   else
     Script.notifyEvent("DeviceNetworkConfig_OnApplyButtonDisabled", true)
@@ -406,18 +407,19 @@ local function selectInterface(row_selected)
     if isSelected then
       selectedInterfaceName = tempSelection
     else
-      selectedInterfaceName = ''
+      selectedInterfaceName = '-'
     end
   else
-    selectedInterfaceName = ''
+    selectedInterfaceName = '-'
   end
+
+  currentInterfaceName  = selectedInterfaceName
 
   if selectedInterfaceName ~= '-' and selectedInterfaceName ~= '' then
     currentIP             = interfacesTable[selectedInterfaceName].ipAddress
     currentSubnet         = interfacesTable[selectedInterfaceName].subnetMask
     currentGateway        = interfacesTable[selectedInterfaceName].defaultGateway
     currentDHCP           = interfacesTable[selectedInterfaceName].dhcp
-    currentInterfaceName  = selectedInterfaceName
     Script.notifyEvent("DeviceNetworkConfig_OnNewIP",             currentIP)
     Script.notifyEvent("DeviceNetworkConfig_OnNewSubnetMask",     currentSubnet)
     Script.notifyEvent("DeviceNetworkConfig_OnNewDefaultGateway", currentGateway)
