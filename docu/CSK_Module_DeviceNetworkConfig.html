@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.12">
 <meta name="author" content="SICK AG">
-<title>Documentation - CSK_Module_DeviceNetworkConfig 2.1.0</title>
+<title>Documentation - CSK_Module_DeviceNetworkConfig 2.2.0</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 /* Stylesheet for CodeRay to match GitHub theme | MIT License | http://foundation.zurb.com */
@@ -615,11 +615,11 @@ h1,h2,h3,h4,h5,h6{color:#007cc1}
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Documentation - CSK_Module_DeviceNetworkConfig 2.1.0</h1>
+<h1>Documentation - CSK_Module_DeviceNetworkConfig 2.2.0</h1>
 <div class="details">
 <span id="author" class="author">SICK AG</span><br>
-<span id="revnumber">version 2.1.0,</span>
-<span id="revdate">2023-08-16</span>
+<span id="revnumber">version 2.2.0,</span>
+<span id="revdate">2024-07-31</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -637,6 +637,8 @@ h1,h2,h3,h4,h5,h6{color:#007cc1}
 <li><a href="#API:Function:CSK_DeviceNetworkConfig.applyConfig"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">applyConfig()</span></a></li>
 <li><a href="#API:Function:CSK_DeviceNetworkConfig.applyEthernetConfig"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">applyEthernetConfig()</span></a></li>
 <li><a href="#API:Function:CSK_DeviceNetworkConfig.getNetworkDescription"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">getNetworkDescription()</span></a></li>
+<li><a href="#API:Function:CSK_DeviceNetworkConfig.getParameters"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">getParameters()</span></a></li>
+<li><a href="#API:Function:CSK_DeviceNetworkConfig.getStatusModuleActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">getStatusModuleActive()</span></a></li>
 <li><a href="#API:Function:CSK_DeviceNetworkConfig.loadParameters"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">loadParameters()</span></a></li>
 <li><a href="#API:Function:CSK_DeviceNetworkConfig.pageCalled"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">pageCalled()</span></a></li>
 <li><a href="#API:Function:CSK_DeviceNetworkConfig.ping"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">ping()</span></a></li>
@@ -675,7 +677,10 @@ h1,h2,h3,h4,h5,h6{color:#007cc1}
 <li><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewParameterName"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewParameterName</span></a></li>
 <li><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewPingDetails"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewPingDetails</span></a></li>
 <li><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewPingResult"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewPingResult</span></a></li>
+<li><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewStatusCSKStyle"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewStatusCSKStyle</span></a></li>
 <li><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewStatusLoadParameterOnReboot"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewStatusLoadParameterOnReboot</span></a></li>
+<li><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewStatusModuleIsActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewStatusModuleIsActive</span></a></li>
+<li><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewStatusModuleVersion"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewStatusModuleVersion</span></a></li>
 <li><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewSubnetMask"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewSubnetMask</span></a></li>
 <li><a href="#API:Event:CSK_DeviceNetworkConfig.OnPersistentDataModuleAvailable"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnPersistentDataModuleAvailable</span></a></li>
 <li><a href="#API:Event:CSK_DeviceNetworkConfig.OnSubnetDisabled"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnSubnetDisabled</span></a></li>
@@ -690,7 +695,7 @@ h1,h2,h3,h4,h5,h6{color:#007cc1}
 </li>
 <li><a href="#API:Crown:CSK_Module_DeviceNetworkConfig"><span class="api-crown">CSK_Module_DeviceNetworkConfig</span></a>
 <ul class="sectlevel3">
-<li><a href="#_short_description_49">Short description</a></li>
+<li><a href="#_short_description_54">Short description</a></li>
 <li><a href="#_overview_2">Overview</a></li>
 </ul>
 </li>
@@ -715,11 +720,11 @@ h1,h2,h3,h4,h5,h6{color:#007cc1}
 </tr>
 <tr>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Version</p></th>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.1.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.2.0</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Date</p></th>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2023-08-16</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2024-07-31</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Author</p></th>
@@ -773,6 +778,12 @@ See following descriptions of events/functions regarding further information.</p
 </li>
 <li>
 <p><a href="#API:Function:CSK_DeviceNetworkConfig.getNetworkDescription">getNetworkDescription()</a></p>
+</li>
+<li>
+<p><a href="#API:Function:CSK_DeviceNetworkConfig.getParameters">getParameters()</a></p>
+</li>
+<li>
+<p><a href="#API:Function:CSK_DeviceNetworkConfig.getStatusModuleActive">getStatusModuleActive()</a></p>
 </li>
 <li>
 <p><a href="#API:Function:CSK_DeviceNetworkConfig.loadParameters">loadParameters()</a></p>
@@ -877,7 +888,16 @@ See following descriptions of events/functions regarding further information.</p
 <p><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewPingResult">OnNewPingResult</a></p>
 </li>
 <li>
+<p><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewStatusCSKStyle">OnNewStatusCSKStyle</a></p>
+</li>
+<li>
 <p><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewStatusLoadParameterOnReboot">OnNewStatusLoadParameterOnReboot</a></p>
+</li>
+<li>
+<p><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewStatusModuleIsActive">OnNewStatusModuleIsActive</a></p>
+</li>
+<li>
+<p><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewStatusModuleVersion">OnNewStatusModuleVersion</a></p>
 </li>
 <li>
 <p><a href="#API:Event:CSK_DeviceNetworkConfig.OnNewSubnetMask">OnNewSubnetMask</a></p>
@@ -1055,18 +1075,133 @@ See following descriptions of events/functions regarding further information.</p
 </div>
 </div>
 <div class="sect4">
-<h5 id="API:Function:CSK_DeviceNetworkConfig.loadParameters"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">loadParameters()</span></h5>
+<h5 id="API:Function:CSK_DeviceNetworkConfig.getParameters"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">getParameters()</span></h5>
 <div class="sect5">
 <h6 id="_short_description_6">Short description</h6>
 <div class="paragraph">
-<p>Load parameters for this module from the CSK_PersistentData module if possible and use them.</p>
+<p>Function to get all parameters of the client in JSON format.</p>
 </div>
+</div>
+<div class="sect5">
+<h6 id="_return_values_2">Return values</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jsonParameters</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON string with all parameters.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect5">
 <h6 id="_sample_auto_generated_5">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.loadParameters()</code></pre>
+<pre class="CodeRay highlight"><code data-lang="lua">jsonParameters = CSK_DeviceNetworkConfig.getParameters()</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="API:Function:CSK_DeviceNetworkConfig.getStatusModuleActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">getStatusModuleActive()</span></h5>
+<div class="sect5">
+<h6 id="_short_description_7">Short description</h6>
+<div class="paragraph">
+<p>Function to get status if module is active.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_return_values_3">Return values</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_sample_auto_generated_6">Sample (auto-generated)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="lua">status = CSK_DeviceNetworkConfig.getStatusModuleActive()</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="API:Function:CSK_DeviceNetworkConfig.loadParameters"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">loadParameters()</span></h5>
+<div class="sect5">
+<h6 id="_short_description_8">Short description</h6>
+<div class="paragraph">
+<p>Load parameters for this module from the CSK_PersistentData module if possible and use them.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_return_values_4">Return values</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">success</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Success to load parameters.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_sample_auto_generated_7">Sample (auto-generated)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="lua">success = CSK_DeviceNetworkConfig.loadParameters()</code></pre>
 </div>
 </div>
 </div>
@@ -1074,13 +1209,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.pageCalled"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">pageCalled()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_7">Short description</h6>
+<h6 id="_short_description_9">Short description</h6>
 <div class="paragraph">
 <p>Function to register "OnResume" of the module UI (only as helper function).</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_return_values_2">Return values</h6>
+<h6 id="_return_values_5">Return values</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1107,7 +1242,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_6">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_8">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">empty = CSK_DeviceNetworkConfig.pageCalled()</code></pre>
@@ -1118,13 +1253,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.ping"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">ping()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_8">Short description</h6>
+<h6 id="_short_description_10">Short description</h6>
 <div class="paragraph">
 <p>Try to ping preset IP (see 'setPingIpAddress').</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_7">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_9">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.ping()</code></pre>
@@ -1135,13 +1270,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.refresh"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">refresh()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_9">Short description</h6>
+<h6 id="_short_description_11">Short description</h6>
 <div class="paragraph">
 <p>Get current configuration of Ethernet ports.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_8">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_10">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.refresh()</code></pre>
@@ -1152,13 +1287,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.removeDNS"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">removeDNS()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_10">Short description</h6>
+<h6 id="_short_description_12">Short description</h6>
 <div class="paragraph">
 <p>Remove the selected nameserver IP.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_9">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_11">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.removeDNS()</code></pre>
@@ -1169,7 +1304,7 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.selectDNSViaUI"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">selectDNSViaUI()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_11">Short description</h6>
+<h6 id="_short_description_13">Short description</h6>
 <div class="paragraph">
 <p>Select nameserver entry via table in UI.</p>
 </div>
@@ -1202,7 +1337,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_10">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_12">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.selectDNSViaUI(selectedRow)</code></pre>
@@ -1213,7 +1348,7 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.selectInterface"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">selectInterface()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_12">Short description</h6>
+<h6 id="_short_description_14">Short description</h6>
 <div class="paragraph">
 <p>Select ethernet interface via table in UI.</p>
 </div>
@@ -1246,7 +1381,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_11">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_13">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.selectInterface(row_selected)</code></pre>
@@ -1257,16 +1392,43 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.sendParameters"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">sendParameters()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_13">Short description</h6>
+<h6 id="_short_description_15">Short description</h6>
 <div class="paragraph">
 <p>Send parameters to CSK_PersistentData module if possible to save them.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_12">Sample (auto-generated)</h6>
+<h6 id="_parameters_4">Parameters</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">noDataSave</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Optional] Set to TRUE if the data should NOT be saved immediately after sending.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_sample_auto_generated_14">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.sendParameters()</code></pre>
+<pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.sendParameters(noDataSave)</code></pre>
 </div>
 </div>
 </div>
@@ -1274,13 +1436,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.setDefaultGateway"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">setDefaultGateway()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_14">Short description</h6>
+<h6 id="_short_description_16">Short description</h6>
 <div class="paragraph">
 <p>Preset default gateway to be configured via 'applyConfig'.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_4">Parameters</h6>
+<h6 id="_parameters_5">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1307,7 +1469,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_13">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_15">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.setDefaultGateway(newDefaultGateway)</code></pre>
@@ -1318,13 +1480,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.setDHCPState"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">setDHCPState()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_15">Short description</h6>
+<h6 id="_short_description_17">Short description</h6>
 <div class="paragraph">
 <p>Preset DHCP status to be configured via 'applyConfig'.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_5">Parameters</h6>
+<h6 id="_parameters_6">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1351,7 +1513,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_14">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_16">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.setDHCPState(newDHCPstate)</code></pre>
@@ -1362,13 +1524,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.setDNS"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">setDNS()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_16">Short description</h6>
+<h6 id="_short_description_18">Short description</h6>
 <div class="paragraph">
 <p>Set IP address of the nameserver.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_6">Parameters</h6>
+<h6 id="_parameters_7">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1395,7 +1557,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_15">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_17">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.setDNS(dns)</code></pre>
@@ -1406,13 +1568,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.setInterfaceIP"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">setInterfaceIP()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_17">Short description</h6>
+<h6 id="_short_description_19">Short description</h6>
 <div class="paragraph">
 <p>Preset IP to be configured via 'applyConfig'.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_7">Parameters</h6>
+<h6 id="_parameters_8">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1439,7 +1601,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_16">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_18">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.setInterfaceIP(newIP)</code></pre>
@@ -1450,13 +1612,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.setLoadOnReboot"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">setLoadOnReboot()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_18">Short description</h6>
+<h6 id="_short_description_20">Short description</h6>
 <div class="paragraph">
 <p>Configure if this module should load its saved parameters at app/device boot up.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_8">Parameters</h6>
+<h6 id="_parameters_9">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1483,7 +1645,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_17">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_19">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.setLoadOnReboot(status)</code></pre>
@@ -1494,13 +1656,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.setParameterName"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">setParameterName()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_19">Short description</h6>
+<h6 id="_short_description_21">Short description</h6>
 <div class="paragraph">
 <p>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_9">Parameters</h6>
+<h6 id="_parameters_10">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1527,7 +1689,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_18">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_20">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.setParameterName(name)</code></pre>
@@ -1538,13 +1700,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.setPingIPAddress"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">setPingIPAddress()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_20">Short description</h6>
+<h6 id="_short_description_22">Short description</h6>
 <div class="paragraph">
 <p>Preset IP to ping (see 'ping' function).</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_10">Parameters</h6>
+<h6 id="_parameters_11">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1571,7 +1733,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_19">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_21">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.setPingIPAddress(ping_ip)</code></pre>
@@ -1582,13 +1744,13 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Function:CSK_DeviceNetworkConfig.setSubnetMask"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-function">setSubnetMask()</span></h5>
 <div class="sect5">
-<h6 id="_short_description_21">Short description</h6>
+<h6 id="_short_description_23">Short description</h6>
 <div class="paragraph">
 <p>Preset subnet mask to be configured via 'applyConfig'.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_parameters_11">Parameters</h6>
+<h6 id="_parameters_12">Parameters</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -1615,7 +1777,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_20">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_22">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua">CSK_DeviceNetworkConfig.setSubnetMask(newSubnetMask)</code></pre>
@@ -1629,7 +1791,7 @@ See following descriptions of events/functions regarding further information.</p
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnApplyButtonDisabled"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnApplyButtonDisabled</span></h5>
 <div class="sect5">
-<h6 id="_short_description_22">Short description</h6>
+<h6 id="_short_description_24">Short description</h6>
 <div class="paragraph">
 <p>Notified to disable / enable 'Apply new config' button in UI.</p>
 </div>
@@ -1662,7 +1824,7 @@ See following descriptions of events/functions regarding further information.</p
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_21">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_23">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnApplyButtonDisabled</span>(isDisabled)
@@ -1677,13 +1839,13 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnDataLoadedOnReboot"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnDataLoadedOnReboot</span></h5>
 <div class="sect5">
-<h6 id="_short_description_23">Short description</h6>
+<h6 id="_short_description_25">Short description</h6>
 <div class="paragraph">
 <p>Event to call if module tried to load parameters and should be ready.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_22">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_24">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnDataLoadedOnReboot</span>()
@@ -1698,7 +1860,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnDHCPDisabled"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnDHCPDisabled</span></h5>
 <div class="sect5">
-<h6 id="_short_description_24">Short description</h6>
+<h6 id="_short_description_26">Short description</h6>
 <div class="paragraph">
 <p>Notified to disable / enable 'DHCP' checkbox in UI.</p>
 </div>
@@ -1731,7 +1893,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_23">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_25">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnDHCPDisabled</span>(isDisabled)
@@ -1746,7 +1908,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnDNSIPError"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnDNSIPError</span></h5>
 <div class="sect5">
-<h6 id="_short_description_25">Short description</h6>
+<h6 id="_short_description_27">Short description</h6>
 <div class="paragraph">
 <p>Highlights the DNS 'IP' in UI if format of IP is not correct.</p>
 </div>
@@ -1779,7 +1941,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_24">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_26">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnDNSIPError</span>(isError)
@@ -1794,7 +1956,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnGatewayDisabled"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnGatewayDisabled</span></h5>
 <div class="sect5">
-<h6 id="_short_description_26">Short description</h6>
+<h6 id="_short_description_28">Short description</h6>
 <div class="paragraph">
 <p>Notified to disable / enable 'Gateway' text field in UI.</p>
 </div>
@@ -1827,7 +1989,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_25">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_27">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnGatewayDisabled</span>(isDisabled)
@@ -1842,7 +2004,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnGatewayError"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnGatewayError</span></h5>
 <div class="sect5">
-<h6 id="_short_description_27">Short description</h6>
+<h6 id="_short_description_29">Short description</h6>
 <div class="paragraph">
 <p>Highlights the 'Gateway field' in UI if format of gateway is not correct.</p>
 </div>
@@ -1875,7 +2037,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_26">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_28">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnGatewayError</span>(isError)
@@ -1890,7 +2052,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnIPDisabled"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnIPDisabled</span></h5>
 <div class="sect5">
-<h6 id="_short_description_28">Short description</h6>
+<h6 id="_short_description_30">Short description</h6>
 <div class="paragraph">
 <p>Notified to disable / enable 'IP' text field in UI.</p>
 </div>
@@ -1923,7 +2085,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_27">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_29">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnIPDisabled</span>(isDisabled)
@@ -1938,7 +2100,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnIPError"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnIPError</span></h5>
 <div class="sect5">
-<h6 id="_short_description_29">Short description</h6>
+<h6 id="_short_description_31">Short description</h6>
 <div class="paragraph">
 <p>Highlights the 'IP' in UI if format of IP is not correct.</p>
 </div>
@@ -1971,7 +2133,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_28">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_30">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnIPError</span>(isError)
@@ -1986,7 +2148,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewDefaultGateway"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewDefaultGateway</span></h5>
 <div class="sect5">
-<h6 id="_short_description_30">Short description</h6>
+<h6 id="_short_description_32">Short description</h6>
 <div class="paragraph">
 <p>Notify current 'Default Gateway'</p>
 </div>
@@ -2019,7 +2181,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_29">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_31">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewDefaultGateway</span>(DefaultGateway)
@@ -2034,7 +2196,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewDHCPStatus"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewDHCPStatus</span></h5>
 <div class="sect5">
-<h6 id="_short_description_31">Short description</h6>
+<h6 id="_short_description_33">Short description</h6>
 <div class="paragraph">
 <p>Notify current DHCP status.</p>
 </div>
@@ -2067,7 +2229,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_30">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_32">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewDHCPStatus</span>(DHCPStatus)
@@ -2082,7 +2244,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewDNS"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewDNS</span></h5>
 <div class="sect5">
-<h6 id="_short_description_32">Short description</h6>
+<h6 id="_short_description_34">Short description</h6>
 <div class="paragraph">
 <p>Notify a new nameserver.</p>
 </div>
@@ -2115,7 +2277,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_31">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_33">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewDNS</span>(dnsServerList)
@@ -2130,7 +2292,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewEthernetConfigStatus"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewEthernetConfigStatus</span></h5>
 <div class="sect5">
-<h6 id="_short_description_33">Short description</h6>
+<h6 id="_short_description_35">Short description</h6>
 <div class="paragraph">
 <p>Notify current configuration process status.</p>
 </div>
@@ -2163,7 +2325,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_32">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_34">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewEthernetConfigStatus</span>(newEthernetConfigStatus)
@@ -2178,7 +2340,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewInterfaceChoice"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewInterfaceChoice</span></h5>
 <div class="sect5">
-<h6 id="_short_description_34">Short description</h6>
+<h6 id="_short_description_36">Short description</h6>
 <div class="paragraph">
 <p>Notify currently selected interface.</p>
 </div>
@@ -2211,7 +2373,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_33">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_35">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewInterfaceChoice</span>(NewInterface)
@@ -2226,7 +2388,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewInterfaceTable"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewInterfaceTable</span></h5>
 <div class="sect5">
-<h6 id="_short_description_35">Short description</h6>
+<h6 id="_short_description_37">Short description</h6>
 <div class="paragraph">
 <p>Notify interface table as JSON (e.g. for table in UI).</p>
 </div>
@@ -2259,7 +2421,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_34">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_36">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewInterfaceTable</span>(InterfaceTable)
@@ -2274,7 +2436,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewIP"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewIP</span></h5>
 <div class="sect5">
-<h6 id="_short_description_36">Short description</h6>
+<h6 id="_short_description_38">Short description</h6>
 <div class="paragraph">
 <p>Notify current IP.</p>
 </div>
@@ -2307,7 +2469,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_35">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_37">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewIP</span>(ip)
@@ -2322,7 +2484,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewParameterName"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewParameterName</span></h5>
 <div class="sect5">
-<h6 id="_short_description_37">Short description</h6>
+<h6 id="_short_description_39">Short description</h6>
 <div class="paragraph">
 <p>Notify name of persistent data parameter.</p>
 </div>
@@ -2355,7 +2517,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_36">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_38">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewParameterName</span>(name)
@@ -2370,7 +2532,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewPingDetails"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewPingDetails</span></h5>
 <div class="sect5">
-<h6 id="_short_description_38">Short description</h6>
+<h6 id="_short_description_40">Short description</h6>
 <div class="paragraph">
 <p>Notify details of executed ping command.</p>
 </div>
@@ -2403,7 +2565,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_37">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_39">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewPingDetails</span>(details)
@@ -2418,7 +2580,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewPingResult"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewPingResult</span></h5>
 <div class="sect5">
-<h6 id="_short_description_39">Short description</h6>
+<h6 id="_short_description_41">Short description</h6>
 <div class="paragraph">
 <p>Notify result of executed ping command.</p>
 </div>
@@ -2451,7 +2613,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_38">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_40">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewPingResult</span>(result)
@@ -2464,15 +2626,63 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </div>
 </div>
 <div class="sect4">
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewStatusCSKStyle"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewStatusCSKStyle</span></h5>
+<div class="sect5">
+<h6 id="_short_description_42">Short description</h6>
+<div class="paragraph">
+<p>Notify UI style to use for CSK modules.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_callback_arguments_18">Callback arguments</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">theme</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UI style</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_sample_auto_generated_41">Sample (auto-generated)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusCSKStyle</span>(theme)
+  <span class="comment">-- Do something</span>
+<span class="keyword">end</span>
+
+Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnNewStatusCSKStyle</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnNewStatusCSKStyle</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
 <h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewStatusLoadParameterOnReboot"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewStatusLoadParameterOnReboot</span></h5>
 <div class="sect5">
-<h6 id="_short_description_40">Short description</h6>
+<h6 id="_short_description_43">Short description</h6>
 <div class="paragraph">
 <p>Notify status if parameters should be loaded on app/device boot up.</p>
 </div>
 </div>
 <div class="sect5">
-<h6 id="_callback_arguments_18">Callback arguments</h6>
+<h6 id="_callback_arguments_19">Callback arguments</h6>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2499,7 +2709,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_39">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_42">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusLoadParameterOnReboot</span>(status)
@@ -2512,59 +2722,11 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </div>
 </div>
 <div class="sect4">
-<h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewSubnetMask"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewSubnetMask</span></h5>
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewStatusModuleIsActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewStatusModuleIsActive</span></h5>
 <div class="sect5">
-<h6 id="_short_description_41">Short description</h6>
+<h6 id="_short_description_44">Short description</h6>
 <div class="paragraph">
-<p>Notify current subnet mask.</p>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_callback_arguments_19">Callback arguments</h6>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 12.5%;">
-<col style="width: 37.5%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Multiplicity</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SubnetMask</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Subnet mask.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect5">
-<h6 id="_sample_auto_generated_40">Sample (auto-generated)</h6>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewSubnetMask</span>(SubnetMask)
-  <span class="comment">-- Do something</span>
-<span class="keyword">end</span>
-
-Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnNewSubnetMask</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnNewSubnetMask</span><span class="delimiter">&quot;</span></span>)</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="API:Event:CSK_DeviceNetworkConfig.OnPersistentDataModuleAvailable"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnPersistentDataModuleAvailable</span></h5>
-<div class="sect5">
-<h6 id="_short_description_42">Short description</h6>
-<div class="paragraph">
-<p>Notify status if features of CSK_PersistendData module are available.</p>
+<p>Notify if module can be used on device.</p>
 </div>
 </div>
 <div class="sect5">
@@ -2595,24 +2757,24 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_41">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_43">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnPersistentDataModuleAvailable</span>(status)
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusModuleIsActive</span>(status)
   <span class="comment">-- Do something</span>
 <span class="keyword">end</span>
 
-Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnPersistentDataModuleAvailable</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnPersistentDataModuleAvailable</span><span class="delimiter">&quot;</span></span>)</code></pre>
+Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnNewStatusModuleIsActive</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnNewStatusModuleIsActive</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="API:Event:CSK_DeviceNetworkConfig.OnSubnetDisabled"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnSubnetDisabled</span></h5>
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewStatusModuleVersion"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewStatusModuleVersion</span></h5>
 <div class="sect5">
-<h6 id="_short_description_43">Short description</h6>
+<h6 id="_short_description_45">Short description</h6>
 <div class="paragraph">
-<p>Notified to disable / enable 'Subnet mask' text field in UI.</p>
+<p>Notify version of module.</p>
 </div>
 </div>
 <div class="sect5">
@@ -2634,33 +2796,33 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">isDisabled</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">version</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Version</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_42">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_44">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnSubnetDisabled</span>(isDisabled)
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewStatusModuleVersion</span>(version)
   <span class="comment">-- Do something</span>
 <span class="keyword">end</span>
 
-Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnSubnetDisabled</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnSubnetDisabled</span><span class="delimiter">&quot;</span></span>)</code></pre>
+Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnNewStatusModuleVersion</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnNewStatusModuleVersion</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="API:Event:CSK_DeviceNetworkConfig.OnSubnetError"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnSubnetError</span></h5>
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnNewSubnetMask"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnNewSubnetMask</span></h5>
 <div class="sect5">
-<h6 id="_short_description_44">Short description</h6>
+<h6 id="_short_description_46">Short description</h6>
 <div class="paragraph">
-<p>Highlights the 'Subnet' field in UI if format is not correct.</p>
+<p>Notify current subnet mask.</p>
 </div>
 </div>
 <div class="sect5">
@@ -2682,33 +2844,33 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">isError</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SubnetMask</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subnet mask.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_43">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_45">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnSubnetError</span>(isError)
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnNewSubnetMask</span>(SubnetMask)
   <span class="comment">-- Do something</span>
 <span class="keyword">end</span>
 
-Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnSubnetError</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnSubnetError</span><span class="delimiter">&quot;</span></span>)</code></pre>
+Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnNewSubnetMask</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnNewSubnetMask</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="API:Event:CSK_DeviceNetworkConfig.OnUserLevelAdminActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnUserLevelAdminActive</span></h5>
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnPersistentDataModuleAvailable"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnPersistentDataModuleAvailable</span></h5>
 <div class="sect5">
-<h6 id="_short_description_45">Short description</h6>
+<h6 id="_short_description_47">Short description</h6>
 <div class="paragraph">
-<p>Status of Admin userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
+<p>Notify status if features of CSK_PersistendData module are available.</p>
 </div>
 </div>
 <div class="sect5">
@@ -2739,24 +2901,24 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_44">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_46">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelAdminActive</span>(status)
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnPersistentDataModuleAvailable</span>(status)
   <span class="comment">-- Do something</span>
 <span class="keyword">end</span>
 
-Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnUserLevelAdminActive</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnUserLevelAdminActive</span><span class="delimiter">&quot;</span></span>)</code></pre>
+Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnPersistentDataModuleAvailable</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnPersistentDataModuleAvailable</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="API:Event:CSK_DeviceNetworkConfig.OnUserLevelMaintenanceActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnUserLevelMaintenanceActive</span></h5>
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnSubnetDisabled"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnSubnetDisabled</span></h5>
 <div class="sect5">
-<h6 id="_short_description_46">Short description</h6>
+<h6 id="_short_description_48">Short description</h6>
 <div class="paragraph">
-<p>Status of Maintenance userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
+<p>Notified to disable / enable 'Subnet mask' text field in UI.</p>
 </div>
 </div>
 <div class="sect5">
@@ -2778,7 +2940,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">isDisabled</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
@@ -2787,24 +2949,24 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_45">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_47">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelMaintenanceActive</span>(status)
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnSubnetDisabled</span>(isDisabled)
   <span class="comment">-- Do something</span>
 <span class="keyword">end</span>
 
-Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnUserLevelMaintenanceActive</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnUserLevelMaintenanceActive</span><span class="delimiter">&quot;</span></span>)</code></pre>
+Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnSubnetDisabled</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnSubnetDisabled</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="API:Event:CSK_DeviceNetworkConfig.OnUserLevelOperatorActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnUserLevelOperatorActive</span></h5>
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnSubnetError"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnSubnetError</span></h5>
 <div class="sect5">
-<h6 id="_short_description_47">Short description</h6>
+<h6 id="_short_description_49">Short description</h6>
 <div class="paragraph">
-<p>Status of Operator userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
+<p>Highlights the 'Subnet' field in UI if format is not correct.</p>
 </div>
 </div>
 <div class="sect5">
@@ -2826,7 +2988,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">isError</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
@@ -2835,24 +2997,24 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_46">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_48">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelOperatorActive</span>(status)
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnSubnetError</span>(isError)
   <span class="comment">-- Do something</span>
 <span class="keyword">end</span>
 
-Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnUserLevelOperatorActive</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnUserLevelOperatorActive</span><span class="delimiter">&quot;</span></span>)</code></pre>
+Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnSubnetError</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnSubnetError</span><span class="delimiter">&quot;</span></span>)</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="API:Event:CSK_DeviceNetworkConfig.OnUserLevelServiceActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnUserLevelServiceActive</span></h5>
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnUserLevelAdminActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnUserLevelAdminActive</span></h5>
 <div class="sect5">
-<h6 id="_short_description_48">Short description</h6>
+<h6 id="_short_description_50">Short description</h6>
 <div class="paragraph">
-<p>Status of Service userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
+<p>Status of Admin userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
 </div>
 </div>
 <div class="sect5">
@@ -2883,7 +3045,151 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </table>
 </div>
 <div class="sect5">
-<h6 id="_sample_auto_generated_47">Sample (auto-generated)</h6>
+<h6 id="_sample_auto_generated_49">Sample (auto-generated)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelAdminActive</span>(status)
+  <span class="comment">-- Do something</span>
+<span class="keyword">end</span>
+
+Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnUserLevelAdminActive</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnUserLevelAdminActive</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnUserLevelMaintenanceActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnUserLevelMaintenanceActive</span></h5>
+<div class="sect5">
+<h6 id="_short_description_51">Short description</h6>
+<div class="paragraph">
+<p>Status of Maintenance userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_callback_arguments_27">Callback arguments</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_sample_auto_generated_50">Sample (auto-generated)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelMaintenanceActive</span>(status)
+  <span class="comment">-- Do something</span>
+<span class="keyword">end</span>
+
+Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnUserLevelMaintenanceActive</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnUserLevelMaintenanceActive</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnUserLevelOperatorActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnUserLevelOperatorActive</span></h5>
+<div class="sect5">
+<h6 id="_short_description_52">Short description</h6>
+<div class="paragraph">
+<p>Status of Operator userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_callback_arguments_28">Callback arguments</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_sample_auto_generated_51">Sample (auto-generated)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelOperatorActive</span>(status)
+  <span class="comment">-- Do something</span>
+<span class="keyword">end</span>
+
+Script.register(<span class="string"><span class="delimiter">&quot;</span><span class="content">CSK_DeviceNetworkConfig.OnUserLevelOperatorActive</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">handleOnUserLevelOperatorActive</span><span class="delimiter">&quot;</span></span>)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="API:Event:CSK_DeviceNetworkConfig.OnUserLevelServiceActive"><span class="breadcrumb">CSK_DeviceNetworkConfig.</span><span class="api-event">OnUserLevelServiceActive</span></h5>
+<div class="sect5">
+<h6 id="_short_description_53">Short description</h6>
+<div class="paragraph">
+<p>Status of Service userlevel. Used internally in combination with the CSK_UserManagement module if available.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_callback_arguments_29">Callback arguments</h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Multiplicity</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BOOL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_sample_auto_generated_52">Sample (auto-generated)</h6>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="lua"><span class="keyword">function</span> <span class="function">handleOnUserLevelServiceActive</span>(status)
@@ -2900,7 +3206,7 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="sect2">
 <h3 id="API:Crown:CSK_Module_DeviceNetworkConfig"><span class="api-crown">CSK_Module_DeviceNetworkConfig</span></h3>
 <div class="sect3">
-<h4 id="_short_description_49">Short description</h4>
+<h4 id="_short_description_54">Short description</h4>
 <div class="paragraph">
 <p>This is an automatically generated CROWN (description not necessary).</p>
 </div>
@@ -2915,8 +3221,8 @@ Script.register(<span class="string"><span class="delimiter">&quot;</span><span 
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 2.1.0<br>
-Last updated 2023-08-16 15:09:30 +0200
+Version 2.2.0<br>
+Last updated 2024-07-31 16:12:12 +0200
 </div>
 </div>
 <script type="text/javascript">
