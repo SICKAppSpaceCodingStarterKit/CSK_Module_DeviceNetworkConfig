@@ -190,10 +190,6 @@ local function getNameserverList()
     end
   end
 
-  if #retValue == 0 then
-    table.insert(retValue, {dns= '-'})
-  end
-
   return retValue
 end
 
@@ -258,7 +254,11 @@ local function updateNameservers(nameserverList)
   CSK_DeviceNetworkConfig.sendParameters()
 
   -- Update DNS UI table
-  Script.notifyEvent("DeviceNetworkConfig_OnNewDNS", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
+  local dnsList = deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList())
+  if dnsList == '[]' or dnsList == '' then
+    dnsList = '[{"dns":"-"}]'
+  end
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDNS", dnsList)
 end
 
 local function addDNS()
@@ -318,7 +318,11 @@ local function selectDNSViaUI(selectedRow)
 
   -- Workaround to reset the selection of the DNS in the UI table
   Script.sleep(100)
-  Script.notifyEvent("DeviceNetworkConfig_OnNewDNS", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
+  local dnsList = deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList())
+  if dnsList == '[]' or dnsList == '' then
+    dnsList = '[{"dns":"-"}]'
+  end
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDNS", dnsList)
 end
 Script.serveFunction('CSK_DeviceNetworkConfig.selectDNSViaUI', selectDNSViaUI)
 
@@ -346,7 +350,12 @@ local function handleOnExpiredTmrDeviceNetworkConfig()
   Script.notifyEvent("DeviceNetworkConfig_OnNewDefaultGateway", '-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceChoice",'-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
-  Script.notifyEvent("DeviceNetworkConfig_OnNewDNS", deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList()))
+  
+  local dnsList = deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList())
+  if dnsList == '[]' or dnsList == '' then
+    dnsList = '[{"dns":"-"}]'
+  end
+  Script.notifyEvent("DeviceNetworkConfig_OnNewDNS", dnsList)
 
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusLoadParameterOnReboot", deviceNetworkConfig_Model.parameterLoadOnReboot)
   Script.notifyEvent("DeviceNetworkConfig_OnPersistentDataModuleAvailable", deviceNetworkConfig_Model.persistentModuleAvailable)
