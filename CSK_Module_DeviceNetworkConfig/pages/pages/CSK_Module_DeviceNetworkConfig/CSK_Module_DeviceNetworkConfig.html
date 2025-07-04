@@ -6,13 +6,12 @@
         <layout-row id="RowLayout20">
             <layout-column id="ColumnLayout17" style="align-items: stretch">
                 <layout-row id="RowLayout14" style="align-items: baseline">
-                    <davinci-value-display id="VD_Title" class="myCustomLabel_CSK_Module_DeviceNetworkConfig"
-                        value="Device Network Configuration">
-                    </davinci-value-display>
+                    <h1 id="Heading_Title" class="myCustomLabel_CSK_Module_DeviceNetworkConfig">
+                        Device Network Configuration
+                    </h1>
                     <davinci-value-display id="VD_Version">
-                        <crown-edpws-binding property="value" name="CSK_DeviceNetworkConfig/OnNewStatusModuleVersion"
-                            update-on-resume>
-                        </crown-edpws-binding>
+                        <crown-on property="value" crown-event="CSK_DeviceNetworkConfig/OnNewStatusModuleVersion">
+                        </crown-on>
                     </davinci-value-display>
                 </layout-row>
             </layout-column>
@@ -93,8 +92,8 @@
                                             <layout-column id="ColumnLayout14" style="align-items: center">
                                                 <davinci-button id="Button_Refresh"
                                                     class="myCustomButton_CSK_Module_DeviceNetworkConfig" type="outline"
-                                                    icon-position="append" icon="navigation/refresh"
                                                     title="Refresh list">
+                                                    <davinci-icon icon="navigation/refresh"></davinci-icon>
                                                     <span></span>
                                                     <crown-binding event="submit" name="CSK_DeviceNetworkConfig/refresh"
                                                         auto-commit>
@@ -104,10 +103,9 @@
                                             <layout-column id="ColumnLayout3" style="align-items: center">
                                                 <davinci-value-display id="VD_SelectedInterface"
                                                     class="myCustomMinWidth_CSK_Module_DeviceNetworkConfig">
-                                                    <crown-edpws-binding property="label"
-                                                        name="CSK_DeviceNetworkConfig/OnNewInterfaceChoice"
-                                                        update-on-resume>
-                                                    </crown-edpws-binding>
+                                                    <crown-on property="label"
+                                                        crown-event="CSK_DeviceNetworkConfig/OnNewInterfaceChoice">
+                                                    </crown-on>
                                                 </davinci-value-display>
                                             </layout-column>
                                             <layout-column id="ColumnLayout7"
@@ -209,8 +207,8 @@
                                             <layout-column id="ColumnLayout16" style="align-items: center">
                                                 <davinci-button id="Button_ApplyNewConfig"
                                                     class="myCustomButton_CSK_Module_DeviceNetworkConfig" type="outline"
-                                                    icon-position="append" title="Apply new network configuration"
-                                                    icon="navigation/check">
+                                                    title="Apply new network configuration">
+                                                    <davinci-icon icon="navigation/check"></davinci-icon>
                                                     <span></span>
                                                     <crown-edpws-binding property="disabled"
                                                         name="CSK_DeviceNetworkConfig/OnApplyButtonDisabled"
@@ -252,8 +250,8 @@
                                                 <layout-row id="RowLayout17">
                                                     <davinci-button id="BTN_AddDns"
                                                         class="myCustomButton_CSK_Module_DeviceNetworkConfig"
-                                                        type="outline" icon-position="append"
-                                                        title="Add the defined DNS" icon="content/add">
+                                                        type="outline" title="Add the defined DNS">
+                                                        <davinci-icon icon="content/add"></davinci-icon>
                                                         <span></span>
                                                         <crown-set event="submit"
                                                             crown-function="CSK_DeviceNetworkConfig/addDNS"
@@ -262,8 +260,8 @@
                                                     </davinci-button>
                                                     <davinci-button id="BTN_RemoveDns"
                                                         class="myCustomButton_CSK_Module_DeviceNetworkConfig"
-                                                        type="outline" icon-position="append"
-                                                        title="Remove the selected DNS entry" icon="action/delete">
+                                                        type="outline" title="Remove the selected DNS entry">
+                                                        <davinci-icon icon="action/delete"></davinci-icon>
                                                         <span></span>
                                                         <crown-set event="submit"
                                                             crown-function="CSK_DeviceNetworkConfig/removeDNS"
@@ -300,9 +298,9 @@
 														</span>
                                                     </davinci-callout>
                                                 </davinci-collapse>
-												<layout-row id="RowLayout21"
-													class="myCustomSpacerVert10_CSK_Module_DeviceNetworkConfig">
-												</layout-row>
+                                                <layout-row id="RowLayout21"
+                                                    class="myCustomSpacerVert10_CSK_Module_DeviceNetworkConfig">
+                                                </layout-row>
                                             </layout-column>
                                         </layout-row>
                                     </layout-column>
@@ -323,7 +321,8 @@
                                             </davinci-text-field>
                                             <davinci-button id="Button_Ping"
                                                 class="myCustomButton_CSK_Module_DeviceNetworkConfig" type="outline"
-                                                icon-position="append" title="PING" icon="content/send">
+                                                title="PING">
+                                                <davinci-icon icon="content/send"></davinci-icon>
                                                 <span></span>
                                                 <crown-set event="submit" crown-function="CSK_DeviceNetworkConfig/ping"
                                                     protocol="crownMSGPACK">
@@ -336,9 +335,9 @@
                                                 </crown-edpws-binding>
                                             </davinci-status-indicator>
                                             <davinci-value-display id="VD_PingDetails" style="align-self: center">
-                                                <crown-edpws-binding property="value"
-                                                    name="CSK_DeviceNetworkConfig/OnNewPingDetails" update-on-resume>
-                                                </crown-edpws-binding>
+                                                <crown-on property="value"
+                                                    crown-event="CSK_DeviceNetworkConfig/OnNewPingDetails">
+                                                </crown-on>
                                             </davinci-value-display>
                                         </layout-row>
                                     </layout-column>

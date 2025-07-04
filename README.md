@@ -12,6 +12,7 @@ For further information check out the [documentation](https://raw.githack.com/SI
 Tested on:
 |Device|Firmware|Module version|
 |--|--|--|
+|SIM800|V1.1.1|V2.2.2|
 |SICK AppEngine|V1.7.0|V2.2.0|
 |SIM1012|V2.4.2|V2.2.0|
 |SIM1000FX|V1.7.2|<V2.2.0|

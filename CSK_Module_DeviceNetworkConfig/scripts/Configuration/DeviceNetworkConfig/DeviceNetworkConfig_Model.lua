@@ -81,6 +81,7 @@ local function refreshInterfaces()
   return deviceNetworkConfig_Model.interfacesTable
 end
 deviceNetworkConfig_Model.refreshInterfaces = refreshInterfaces
+refreshInterfaces()
 
 local function getNetworkDescription()
   if deviceNetworkConfig_Model.interfacesTable ~= {} then
