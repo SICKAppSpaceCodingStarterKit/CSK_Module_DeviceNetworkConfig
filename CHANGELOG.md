@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 2.2.2
+
+### Improvements
+- Check if specific set functions are supported (e.g. not for SIM300 or SAE)
+
+### Bugfix
+- Legacy bindings of ValueDisplay elements within UI did not work if deployed with VS Code AppSpace SDK
+- UI differs if deployed via Appstudio or VS Code AppSpace SDK
+- Fullscreen icon of iFrame was visible
+
 ## Release 2.2.1
 
 ### Bugfix

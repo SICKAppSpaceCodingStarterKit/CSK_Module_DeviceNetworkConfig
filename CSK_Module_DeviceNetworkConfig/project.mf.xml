@@ -132,6 +132,10 @@ See following descriptions of events/functions regarding further information.
                     <desc>Notify if module can be used on device.</desc>
                     <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
+                <event name="OnNewStatusSetFunctionsNotSupported">
+                    <desc>Notify if module can not be used to set configuration (some devices only show current config).</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
                 <function name="pageCalled">
                     <desc>Function to register "OnResume" of the module UI (only as helper function).</desc>
                     <return desc="Empty string (only needed to simplify binding)." multiplicity="1" name="empty" type="string"/>
@@ -227,7 +231,7 @@ See following descriptions of events/functions regarding further information.
             </serves>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">2.2.1</meta>
+        <meta key="version">2.2.2</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>

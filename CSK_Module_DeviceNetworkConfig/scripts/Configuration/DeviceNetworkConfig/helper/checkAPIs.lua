@@ -46,9 +46,22 @@ local function loadDateTimeAPIs()
   DateTime = require 'API.DateTime'
 end
 
+-- Function to check if set features are not available
+local function checkSetFunctionsNotSupported()
+  local deviceName = Engine.getTypeName()
+  local isSIM300 = string.find(deviceName, 'SIG300') or string.find(deviceName, 'SIM300')
+  local isSAE = string.find(deviceName, 'AppEngine') or string.find(deviceName, 'Emulator')
+  if isSIM300 or isSAE then
+    return true
+  else
+    return false
+  end
+end
+
 availableAPIs.default = xpcall(loadAPIs, debug.traceback) -- TRUE if all default APIs were loaded correctly
 availableAPIs.specific = xpcall(loadSpecificAPIs, debug.traceback) -- TRUE if all specific APIs were loaded correctly
 availableAPIs.dateTime = xpcall(loadDateTimeAPIs, debug.traceback) -- TRUE if DateTime API was loaded correctly
+availableAPIs.noSetSupport = checkSetFunctionsNotSupported() -- TRUE if set function are not supported
 
 return availableAPIs
 --**************************************************************************

@@ -35,6 +35,7 @@ local deviceNetworkConfig_Model
 Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusModuleVersion', 'DeviceNetworkConfig_OnNewStatusModuleVersion')
 Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusCSKStyle', 'DeviceNetworkConfig_OnNewStatusCSKStyle')
 Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusModuleIsActive', 'DeviceNetworkConfig_OnNewStatusModuleIsActive')
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusSetFunctionsNotSupported', 'DeviceNetworkConfig_OnNewStatusSetFunctionsNotSupported')
 
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewStatusLoadParameterOnReboot", "DeviceNetworkConfig_OnNewStatusLoadParameterOnReboot")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnPersistentDataModuleAvailable", "DeviceNetworkConfig_OnPersistentDataModuleAvailable")
@@ -332,6 +333,7 @@ local function handleOnExpiredTmrDeviceNetworkConfig()
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusModuleVersion", 'v' .. deviceNetworkConfig_Model.version)
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusCSKStyle", deviceNetworkConfig_Model.styleForUI)
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusModuleIsActive", _G.availableAPIs.default and _G.availableAPIs.specific)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusSetFunctionsNotSupported", _G.availableAPIs.noSetSupport)
 
   updateUserLevel()
 
