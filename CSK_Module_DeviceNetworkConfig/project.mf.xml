@@ -136,6 +136,42 @@ See following descriptions of events/functions regarding further information.
                     <desc>Notify if module can not be used to set configuration (some devices only show current config).</desc>
                     <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
+                <event name="OnNewStatusShowBridgeFeature">
+                    <desc>Notify status to show bridge feature.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewStatusBridgeIP">
+                    <desc>Notify IP to use for bridge.</desc>
+                    <param desc="IP" multiplicity="1" name="ip" type="string"/>
+                </event>
+                <event name="OnNewStatusBridgeSubnetMask">
+                    <desc>Notify subnet mask to use for bridge.</desc>
+                    <param desc="Subnet mask." multiplicity="1" name="mask" type="string"/>
+                </event>
+                <event name="OnNewStatusBridgeGateway">
+                    <desc>Notify gateway to use for bridge.</desc>
+                    <param desc="Gateway" multiplicity="1" name="gateway" type="string"/>
+                </event>
+                <event name="OnNewStatusBridgeDelay">
+                    <desc>Notify delay in seconds to wait before activating bridge after restart.</desc>
+                    <param desc="Delay in seconds." multiplicity="1" name="delay" type="int"/>
+                </event>
+                <event name="OnNewStatusBridgeTestTime">
+                    <desc>Notify time in minutes to reset bridge. Useful to test bridge setup without losing the access to the device.</desc>
+                    <param desc="Time in minutes to wait before clearing the bridge." multiplicity="1" name="time" type="int"/>
+                </event>
+                <event name="OnNewStatusBridgeActive">
+                    <desc>Notify status if bridge is active.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewStatusBridgeInterfaces">
+                    <desc>Notify list of ethernet interfaces to use for bridge.</desc>
+                    <param desc="List of interfaces." multiplicity="1" name="list" type="string"/>
+                </event>
+                <event name="OnNewStatusListOfEthernetInterfaces">
+                    <desc>Notify list of available ethernet interfaces.</desc>
+                    <param desc="List of interfaces." multiplicity="1" name="list" type="string"/>
+                </event>
                 <function name="pageCalled">
                     <desc>Function to register "OnResume" of the module UI (only as helper function).</desc>
                     <return desc="Empty string (only needed to simplify binding)." multiplicity="1" name="empty" type="string"/>
@@ -228,10 +264,42 @@ See following descriptions of events/functions regarding further information.
                     <desc>Function to get status if module is active.</desc>
                     <return desc="Status" multiplicity="1" name="status" type="bool"/>
                 </function>
+                <function name="setShowBridgeFeature">
+                    <desc>Function so set status to show bridge feature.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </function>
+                <function name="setBridgeIP">
+                    <desc>Function to set IP of bridge.</desc>
+                    <param desc="IP" multiplicity="1" name="ip" type="string"/>
+                </function>
+                <function name="setBridgeSubnetMask">
+                    <desc>Function to set subnet mask of bridge.</desc>
+                    <param desc="Subnet mask" multiplicity="1" name="mask" type="string"/>
+                </function>
+                <function name="setBridgeGateway">
+                    <desc>Function to set gateway of bridge.</desc>
+                    <param desc="Gateway" multiplicity="1" name="gateway" type="string"/>
+                </function>
+                <function name="setBridgeActive">
+                    <desc>Function to set status of bridge,</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </function>
+                <function name="setBridgeInterfaces">
+                    <desc>Function to set interfaces to use for bridge.</desc>
+                    <param desc="Interfaces" multiplicity="+" name="interfaces" type="string"/>
+                </function>
+                <function name="setBridgeDelay">
+                    <desc>Function to set delay to wait before activating bridge after restart.</desc>
+                    <param desc="Delay in seconds." multiplicity="1" name="delay" type="int"/>
+                </function>
+                <function name="setBridgeTestTime">
+                    <desc>Function to set time to reset bridge. This helps to test the bridge setup.</desc>
+                    <param desc="Time in minutes to wait before deleting the bridge. Set to 0 to keep bridge." multiplicity="1" name="time" type="int"/>
+                </function>
             </serves>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">2.2.2</meta>
+        <meta key="version">2.3.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>

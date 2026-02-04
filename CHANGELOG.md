@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 2.3.0
+
+### New features
+- Feature to bridge ETH ports
+
+### Improvements
+- Better handling of persistent data
+
+### Bugfix
+- Configured DNS server were not loaded
+
 ## Release 2.2.2
 
 ### Improvements

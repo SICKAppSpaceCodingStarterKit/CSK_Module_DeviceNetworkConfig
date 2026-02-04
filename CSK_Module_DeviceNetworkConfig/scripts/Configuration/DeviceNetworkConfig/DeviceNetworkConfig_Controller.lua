@@ -60,6 +60,18 @@ Script.serveEvent("CSK_DeviceNetworkConfig.OnNewInterfaceChoice", "DeviceNetwork
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewDNS", "DeviceNetworkConfig_OnNewDNS")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnDNSIPError", "DeviceNetworkConfig_OnDNSIPError")
 
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusShowBridgeFeature', 'DeviceNetworkConfig_OnNewStatusShowBridgeFeature')
+
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeIP', 'DeviceNetworkConfig_OnNewStatusBridgeIP')
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeSubnetMask', 'DeviceNetworkConfig_OnNewStatusBridgeSubnetMask')
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeGateway', 'DeviceNetworkConfig_OnNewStatusBridgeGateway')
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeActive', 'DeviceNetworkConfig_OnNewStatusBridgeActive')
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusListOfEthernetInterfaces', 'DeviceNetworkConfig_OnNewStatusListOfEthernetInterfaces')
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeInterfaces', 'DeviceNetworkConfig_OnNewStatusBridgeInterfaces')
+
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeDelay', 'DeviceNetworkConfig_OnNewStatusBridgeDelay')
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeTestTime', 'DeviceNetworkConfig_OnNewStatusBridgeTestTime')
+
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelOperatorActive", "DeviceNetworkConfig_OnUserLevelOperatorActive")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelMaintenanceActive", "DeviceNetworkConfig_OnUserLevelMaintenanceActive")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelServiceActive", "DeviceNetworkConfig_OnUserLevelServiceActive")
@@ -153,7 +165,7 @@ end
 
 local function refresh()
   interfacesTable = deviceNetworkConfig_Model.refreshInterfaces()
-  jsonInterfaceListContent = deviceNetworkConfig_Model.helperFuncs.createJsonList(interfacesTable, selectedInterfaceName)
+  jsonInterfaceListContent = deviceNetworkConfig_Model.helperFuncs.createSpecificJsonList(interfacesTable, selectedInterfaceName)
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceTable", jsonInterfaceListContent)
   checkWhatToDisable()
 end
@@ -352,7 +364,20 @@ local function handleOnExpiredTmrDeviceNetworkConfig()
   Script.notifyEvent("DeviceNetworkConfig_OnNewDefaultGateway", '-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceChoice",'-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
-  
+
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusShowBridgeFeature", deviceNetworkConfig_Model.showBridgeFeature)
+
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeIP", deviceNetworkConfig_Model.parameters.bridgeIP)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeSubnetMask", deviceNetworkConfig_Model.parameters.bridgeSubnetMask)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeGateway", deviceNetworkConfig_Model.parameters.bridgeGateway)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeActive", deviceNetworkConfig_Model.parameters.bridgeActive)
+
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusListOfEthernetInterfaces", deviceNetworkConfig_Model.helperFuncs.createJsonList(deviceNetworkConfig_Model.listOfInterfaces))
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeInterfaces", deviceNetworkConfig_Model.helperFuncs.createJsonList(deviceNetworkConfig_Model.parameters.bridgeInterfaces))
+
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeDelay", deviceNetworkConfig_Model.parameters.bridgeDelay)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeTestTime", deviceNetworkConfig_Model.parameters.bridgeTestTime)
+
   local dnsList = deviceNetworkConfig_Model.helperFuncs.json.encode(getNameserverList())
   if dnsList == '[]' or dnsList == '' then
     dnsList = '[{"dns":"-"}]'
@@ -449,7 +474,7 @@ local function selectInterface(row_selected)
     Script.notifyEvent("DeviceNetworkConfig_OnGatewayDisabled", true)
   end
   Script.sleep(100)
-  jsonInterfaceListContent = deviceNetworkConfig_Model.helperFuncs.createJsonList(interfacesTable, selectedInterfaceName)
+  jsonInterfaceListContent = deviceNetworkConfig_Model.helperFuncs.createSpecificJsonList(interfacesTable, selectedInterfaceName)
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceTable", jsonInterfaceListContent)
   checkWhatToDisable()
 end
@@ -501,6 +526,65 @@ local function setDHCPState(newDHCPState)
   checkWhatToDisable()
 end
 Script.serveFunction("CSK_DeviceNetworkConfig.setDHCPState", setDHCPState)
+
+local function setShowBridgeFeature(status)
+  if _G.availableAPIs.bridge then
+    deviceNetworkConfig_Model.showBridgeFeature = status
+    Script.notifyEvent("DeviceNetworkConfig_OnNewStatusShowBridgeFeature", status)
+  else
+    _G.logger:info(nameOfModule .. ": Bridge feature not supported on device.")
+    Script.notifyEvent("DeviceNetworkConfig_OnNewStatusShowBridgeFeature", false)
+  end
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setShowBridgeFeature', setShowBridgeFeature)
+
+local function setBridgeIP(ip)
+  deviceNetworkConfig_Model.parameters.bridgeIP = ip
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeIP', setBridgeIP)
+
+local function setBridgeSubnetMask(mask)
+  deviceNetworkConfig_Model.parameters.bridgeSubnetMask = mask
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeSubnetMask', setBridgeSubnetMask)
+
+local function setBridgeGateway(gateway)
+  deviceNetworkConfig_Model.parameters.bridgeGateway = gateway
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeGateway', setBridgeGateway)
+
+local function setBridgeActive(status)
+  if _G.availableAPIs.bridge then
+    deviceNetworkConfig_Model.parameters.bridgeActive = status
+
+    if status then
+      deviceNetworkConfig_Model.createBridge()
+    else
+      deviceNetworkConfig_Model.deleteBridge()
+    end
+  else
+    _G.logger:info(nameOfModule .. ": Bridge feature not supported on device.")
+  end
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeActive', setBridgeActive)
+
+local function setBridgeInterfaces(interfaces)
+  deviceNetworkConfig_Model.parameters.bridgeInterfaces = {}
+  for _, value in pairs(interfaces) do
+    table.insert(deviceNetworkConfig_Model.parameters.bridgeInterfaces, value)
+  end
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeInterfaces', setBridgeInterfaces)
+
+local function setBridgeDelay(delay)
+  deviceNetworkConfig_Model.parameters.bridgeDelay = delay
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeDelay', setBridgeDelay)
+
+local function setBridgeTestTime(time)
+  deviceNetworkConfig_Model.parameters.bridgeTestTime = time
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeTestTime', setBridgeTestTime)
 
 local function setPingIPAddress(ping_ip)
   deviceNetworkConfig_Model.ping_ip_adress = ping_ip
@@ -589,10 +673,22 @@ local function loadParameters()
     if data then
       _G.logger:info(nameOfModule .. ": Loaded parameters from CSK_PersistentData module.")
       deviceNetworkConfig_Model.parameters = deviceNetworkConfig_Model.helperFuncs.convertContainer2Table(data)
+      deviceNetworkConfig_Model.parameters = deviceNetworkConfig_Model.helperFuncs.checkParameters(deviceNetworkConfig_Model.parameters, deviceNetworkConfig_Model.helperFuncs.defaultParameters.getParameters())
 
       -- Load nameservers
       if deviceNetworkConfig_Model.deviceType ~= 'AppEngine' then
         updateNameservers(deviceNetworkConfig_Model.parameters.nameservers)
+      end
+
+      if _G.availableAPIs.bridge and deviceNetworkConfig_Model.parameters.bridgeActive then
+        deviceNetworkConfig_Model.showBridgeFeature = true
+        if deviceNetworkConfig_Model.parameters.bridgeDelay ~= 0 then
+          deviceNetworkConfig_Model.bridgeDelayTimer:setExpirationTime(deviceNetworkConfig_Model.parameters.bridgeDelay*1000)
+          deviceNetworkConfig_Model.bridgeDelayTimer:start()
+          _G.logger:info(nameOfModule .. ": Start timer for bridge delay")
+        else
+          deviceNetworkConfig_Model.createBridge()
+        end
       end
 
       CSK_DeviceNetworkConfig.pageCalled()
@@ -630,10 +726,6 @@ local function handleOnInitialDataLoaded()
 
       if parameterName then
         deviceNetworkConfig_Model.parametersName = parameterName
-        deviceNetworkConfig_Model.parameterLoadOnReboot = loadOnReboot
-      end
-
-      if deviceNetworkConfig_Model.parameterLoadOnReboot then
         loadParameters()
       end
       Script.notifyEvent('DeviceNetworkConfig_OnDataLoadedOnReboot')
