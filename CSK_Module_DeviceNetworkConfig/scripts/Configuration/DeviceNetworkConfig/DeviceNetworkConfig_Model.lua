@@ -17,6 +17,11 @@ deviceNetworkConfig_Model.userManagementModuleAvailable = CSK_UserManagement ~= 
 -- Check if DataPersistent module can be used if wanted
 deviceNetworkConfig_Model.persistentModuleAvailable = CSK_PersistentData ~= nil or false
 
+-- Default values for persistent data
+-- If available, following values will be updated from data of CSK_PersistentData module (check CSK_PersistentData module for this)
+deviceNetworkConfig_Model.parametersName = 'CSK_DeviceNetworkConfig_Parameter' -- name of parameter dataset to be used for this module
+deviceNetworkConfig_Model.parameterLoadOnReboot = false -- Status if parameter dataset should be loaded on app/device reboot
+
 -- Load script to communicate with the DeviceNetworkConfig_Model interface and give access
 -- to the DeviceNetworkConfig_Model object.
 -- Check / edit this script to see/edit functions which communicate with the UI
@@ -28,6 +33,18 @@ deviceNetworkConfig_Model.helperFuncs = require('Configuration/DeviceNetworkConf
 
 deviceNetworkConfig_Model.interfacesTable = {} -- table to hold setup of available ethernet interfaces
 deviceNetworkConfig_Model.ping_ip_adress = "" -- IP address to check for ping
+deviceNetworkConfig_Model.showBridgeFeature = false -- Set status to show bridge feature
+deviceNetworkConfig_Model.listOfInterfaces = {} -- List of available ethernet interfaces
+
+deviceNetworkConfig_Model.bridge = nil -- Optional ethernet bridge
+deviceNetworkConfig_Model.bridgeDelayTimer = Timer.create()
+deviceNetworkConfig_Model.bridgeDelayTimer:setPeriodic(false)
+deviceNetworkConfig_Model.bridgeTestTimer = Timer.create()
+deviceNetworkConfig_Model.bridgeTestTimer:setPeriodic(false)
+
+for key, value in pairs(Ethernet.Interface.getInterfaces()) do
+  table.insert(deviceNetworkConfig_Model.listOfInterfaces, value)
+end
 
 deviceNetworkConfig_Model.styleForUI = 'None' -- Optional parameter to set UI style
 deviceNetworkConfig_Model.version = Engine.getCurrentAppVersion() -- Version of module
@@ -41,12 +58,7 @@ else
 end
 
 deviceNetworkConfig_Model.parameters = {}
-deviceNetworkConfig_Model.parameters.nameservers = {}; -- Name servers (DNS)
-
--- Default values for persistent data
--- If available, following values will be updated from data of CSK_PersistentData module (check CSK_PersistentData module for this)
-deviceNetworkConfig_Model.parametersName = 'CSK_DeviceNetworkConfig_Parameter' -- name of parameter dataset to be used for this module
-deviceNetworkConfig_Model.parameterLoadOnReboot = false -- Status if parameter dataset should be loaded on app/device reboot
+deviceNetworkConfig_Model.parameters = deviceNetworkConfig_Model.helperFuncs.defaultParameters.getParameters() -- Load default parameters
 
 --**************************************************************************
 --********************** End Global Scope **********************************
@@ -61,6 +73,42 @@ local function handleOnStyleChanged(theme)
 end
 Script.register('CSK_PersistentData.OnNewStatusCSKStyle', handleOnStyleChanged)
 
+local function createBridge()
+  if deviceNetworkConfig_Model.parameters.bridgeTestTime ~= 0 then
+    deviceNetworkConfig_Model.bridgeTestTimer:setExpirationTime(deviceNetworkConfig_Model.parameters.bridgeTestTime*60000)
+    deviceNetworkConfig_Model.bridgeTestTimer:start()
+    _G.logger:info(nameOfModule .. ": Start test timer to stop bridge")
+  else
+    deviceNetworkConfig_Model.bridgeTestTimer:stop()
+  end
+
+  _G.logger:info(nameOfModule .. ": Activate bridge.")
+
+  deviceNetworkConfig_Model.bridge = Ethernet.Bridge.create('EthBridge')
+  deviceNetworkConfig_Model.bridge:setStaticAddress(deviceNetworkConfig_Model.parameters.bridgeIP, deviceNetworkConfig_Model.parameters.bridgeSubnetMask, deviceNetworkConfig_Model.parameters.bridgeGateway)
+  deviceNetworkConfig_Model.bridge:setInterfaces(deviceNetworkConfig_Model.parameters.bridgeInterfaces)
+  local suc = deviceNetworkConfig_Model.bridge:enable()
+  CSK_DeviceNetworkConfig.pageCalled()
+end
+deviceNetworkConfig_Model.createBridge = createBridge
+Timer.register(deviceNetworkConfig_Model.bridgeDelayTimer, 'OnExpired', createBridge)
+
+local function deleteBridge()
+  _G.logger:info(nameOfModule .. ": Delete bridge.")
+  deviceNetworkConfig_Model.parameters.bridgeActive = false
+
+  if deviceNetworkConfig_Model.bridge then
+    deviceNetworkConfig_Model.bridge:disable()
+  end
+  deviceNetworkConfig_Model.bridge = nil
+  collectgarbage()
+
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeActive", deviceNetworkConfig_Model.parameters.bridgeActive)
+  CSK_DeviceNetworkConfig.pageCalled()
+end
+deviceNetworkConfig_Model.deleteBridge = deleteBridge
+Timer.register(deviceNetworkConfig_Model.bridgeTestTimer, 'OnExpired', deleteBridge)
+
 ---Function to get current setting of ethernet interfaces
 local function refreshInterfaces()
   deviceNetworkConfig_Model.interfacesTable = {}
@@ -68,14 +116,26 @@ local function refreshInterfaces()
     local dhcpEnabled, ipAddress, subnetMask, gateway = Ethernet.Interface.getAddressConfig(enum)
     local isLinkActive = Ethernet.Interface.isLinkActive(enum)
     local macAddress = Ethernet.Interface.getMACAddress(enum)
+    local isBridged = Ethernet.Interface.isBridged(enum)
     local interfaceConfig = {}
-    interfaceConfig.interfaceName     = enum
-    interfaceConfig.dhcp              = dhcpEnabled
-    interfaceConfig.macAddress        = macAddress
-    interfaceConfig.isLinkActive      = isLinkActive
-    interfaceConfig.ipAddress         = ipAddress
-    interfaceConfig.subnetMask        = subnetMask
-    interfaceConfig.defaultGateway    = gateway
+
+    if isBridged then
+      interfaceConfig.interfaceName     = enum
+      interfaceConfig.dhcp              = false
+      interfaceConfig.macAddress        = 'see Bridge'
+      interfaceConfig.isLinkActive      = 'see Bridge'
+      interfaceConfig.ipAddress         = 'see Bridge'
+      interfaceConfig.subnetMask        = 'see Bridge'
+      interfaceConfig.defaultGateway    = 'see Bridge'
+    else
+      interfaceConfig.interfaceName     = enum
+      interfaceConfig.dhcp              = dhcpEnabled
+      interfaceConfig.macAddress        = macAddress
+      interfaceConfig.isLinkActive      = isLinkActive
+      interfaceConfig.ipAddress         = ipAddress
+      interfaceConfig.subnetMask        = subnetMask
+      interfaceConfig.defaultGateway    = gateway
+    end
     deviceNetworkConfig_Model.interfacesTable[enum] = interfaceConfig
   end
   return deviceNetworkConfig_Model.interfacesTable

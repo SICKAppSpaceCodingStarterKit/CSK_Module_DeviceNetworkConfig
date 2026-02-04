@@ -1,3 +1,7 @@
+export function convertToList(value) {
+  return JSON.parse(value)
+}
+
 export function InvalidUpstreamIPv4Display(inState) {
   const status = document.getElementById('UpstreamIPv4Error')
   if ( status ) {

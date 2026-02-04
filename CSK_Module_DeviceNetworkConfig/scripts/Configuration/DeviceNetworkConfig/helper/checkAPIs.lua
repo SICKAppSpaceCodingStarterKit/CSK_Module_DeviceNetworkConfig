@@ -40,6 +40,10 @@ local function loadSpecificAPIs()
   Ethernet.Interface = require 'API.Ethernet.Interface'
 end
 
+local function loadBridgeAPI()
+  Ethernet.Bridge = require 'API.Ethernet.Bridge'
+end
+
 -- Function to load DateTime APIs
 local function loadDateTimeAPIs()
   -- If you want to check for specific APIs/functions supported on the device the module is running, place relevant APIs here
@@ -60,6 +64,7 @@ end
 
 availableAPIs.default = xpcall(loadAPIs, debug.traceback) -- TRUE if all default APIs were loaded correctly
 availableAPIs.specific = xpcall(loadSpecificAPIs, debug.traceback) -- TRUE if all specific APIs were loaded correctly
+availableAPIs.bridge = xpcall(loadBridgeAPI, debug.traceback) -- TRUE if all specific APIs were loaded correctly
 availableAPIs.dateTime = xpcall(loadDateTimeAPIs, debug.traceback) -- TRUE if DateTime API was loaded correctly
 availableAPIs.noSetSupport = checkSetFunctionsNotSupported() -- TRUE if set function are not supported
 

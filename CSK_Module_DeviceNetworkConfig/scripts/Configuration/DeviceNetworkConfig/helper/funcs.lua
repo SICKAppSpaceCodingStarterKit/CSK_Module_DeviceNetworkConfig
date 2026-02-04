@@ -7,7 +7,11 @@
 --**********************Start Global Scope *********************************
 --**************************************************************************
 
+local nameOfModule = 'CSK_DeviceNetworkConfig'
+
 local funcs = {}
+-- Default parameters for instances of module
+funcs.defaultParameters = require('Configuration/DeviceNetworkConfig/DeviceNetworkConfig_Parameters')
 -- Providing standard JSON functions
 funcs.json = require('Configuration/DeviceNetworkConfig/helper/Json')
 
@@ -48,11 +52,24 @@ local function getSortedTableKeys(content)
   return tableKeys
 end
 
+--- Function to get content list as JSON string
+---@param data string[] Table with data entries
+---@return string sortedTable Sorted entries as JSON string
+local function createJsonList(data)
+  local sortedTable = {}
+  for _, value in pairs(data) do
+    table.insert(sortedTable, value)
+  end
+  table.sort(sortedTable)
+  return funcs.json.encode(sortedTable)
+end
+funcs.createJsonList = createJsonList
+
 --- Function to create a json string out of a table content
 ---@param content string[] Content to use
 ---@param selection int? Currently selected parameter
 ---@return string jsonstring Json list of entries
-local function createJsonList(content, selection)
+local function createSpecificJsonList(content, selection)
   if selection == nil then
     selection = 0
   end
@@ -94,7 +111,7 @@ local function createJsonList(content, selection)
   local jsonstring = deviceNetworkConfig_Model.helperFuncs.json.encode(contentList)
   return jsonstring
 end
-funcs.createJsonList = createJsonList
+funcs.createSpecificJsonList = createSpecificJsonList
 
 --- Function to create a list with numbers
 ---@param size int Size of the list
@@ -176,6 +193,27 @@ local function convertContainer2Table(cont)
   return data
 end
 funcs.convertContainer2Table = convertContainer2Table
+
+--- Function to compare table content. Optionally will fill missing values within content table with values of defaultTable
+---@param content auto Data to check
+---@param defaultTable auto Reference data
+---@return auto[] content Update of data
+local function checkParameters(content, defaultTable)
+  for key, value in pairs(defaultTable) do
+    if type(value) == 'table' then
+      if content[key] == nil then
+        _G.logger:info(nameOfModule .. ": Created missing parameters table '" .. tostring(key) .. "'")
+        content[key] = {}
+      end
+      content[key] = checkParameters(content[key], defaultTable[key])
+    elseif content[key] == nil then
+      _G.logger:info(nameOfModule .. ": Missing parameter '" .. tostring(key) .. "'. Adding default value '" .. tostring(defaultTable[key]) .. "'")
+      content[key] = defaultTable[key]
+    end
+  end
+  return content
+end
+funcs.checkParameters = checkParameters
 
 return funcs
 
