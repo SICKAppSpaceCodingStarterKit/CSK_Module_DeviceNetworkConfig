@@ -15,7 +15,7 @@ local function getParameters()
 
   deviceNetworkConfigParameters.bridgeActive = false -- Set status to activate ethernet bridge
   deviceNetworkConfigParameters.bridgeInterfaces = {} -- List of ports to bridge
-  deviceNetworkConfigParameters.bridgeIP = '192.168.0.1' -- IP address of bridge
+  deviceNetworkConfigParameters.bridgeIP = '192.168.0.123' -- IP address of bridge
   deviceNetworkConfigParameters.bridgeSubnetMask = '255.255.255.0' -- Subnet mask of bridge
   deviceNetworkConfigParameters.bridgeGateway = '0.0.0.0' -- Gateway of bridge
   deviceNetworkConfigParameters.bridgeDelay = 10 -- Time in seconds to wait after restart to activate bridge

@@ -62,11 +62,48 @@ local function checkSetFunctionsNotSupported()
   end
 end
 
+local function loadHTTPAPI()
+  HTTPClient = require 'API.HTTPClient'
+  HTTPClient.Request = require 'API.HTTPClient.Request'
+  HTTPClient.Response = require 'API.HTTPClient.Response'
+end
+
+-- Function to spli firmware version
+local function splitByDot(input)
+  local result = {}
+  for part in string.gmatch(input, "([^%.]+)") do
+    table.insert(result, part)
+  end
+  return result
+end
+
+-- Function to check if device supports ControlCenter access (so far only SIM2000ST-E support with firmware >=1.18)
+local function checkControlCenterAccess()
+  local deviceType = Engine.getTypeCode()
+  local firmware = Engine.getFirmwareVersion()
+
+  local firmwareVersion = splitByDot(firmware)
+  local isSIM2000STE = string.find(deviceType, 'SIM2000%-3')
+
+  if isSIM2000STE then
+    if tonumber(firmwareVersion[1]) >= 2 or (tonumber(firmwareVersion[1]) == 1 and tonumber(firmwareVersion[2]) >= 17) then
+      availableAPIs.bridge = true
+      return true
+    else
+      return false
+    end
+  else
+    return false
+  end
+end
+
 availableAPIs.default = xpcall(loadAPIs, debug.traceback) -- TRUE if all default APIs were loaded correctly
 availableAPIs.specific = xpcall(loadSpecificAPIs, debug.traceback) -- TRUE if all specific APIs were loaded correctly
 availableAPIs.bridge = xpcall(loadBridgeAPI, debug.traceback) -- TRUE if all specific APIs were loaded correctly
 availableAPIs.dateTime = xpcall(loadDateTimeAPIs, debug.traceback) -- TRUE if DateTime API was loaded correctly
 availableAPIs.noSetSupport = checkSetFunctionsNotSupported() -- TRUE if set function are not supported
+availableAPIs.http = xpcall(loadHTTPAPI, debug.traceback) -- TRUE if HTTP API was loaded correctly
+availableAPIs.accessCC = checkControlCenterAccess() -- TRUE if device = SIM2000ST-E and firmware >= 1.18
 
 return availableAPIs
 --**************************************************************************

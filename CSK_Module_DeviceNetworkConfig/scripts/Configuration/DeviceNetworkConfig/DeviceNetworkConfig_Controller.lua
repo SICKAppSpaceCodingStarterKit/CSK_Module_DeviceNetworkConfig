@@ -15,6 +15,11 @@ local tmrDeviceNetworkConfig = Timer.create()
 tmrDeviceNetworkConfig:setExpirationTime(300)
 tmrDeviceNetworkConfig:setPeriodic(false)
 
+-- Timer to hide message on UI after 5 seconds
+local tmrHideMessage = Timer.create()
+tmrHideMessage:setExpirationTime(5000)
+tmrHideMessage:setPeriodic(false)
+
 -- Currently selected / predefined values for network config
 local currentInterfaceName  = '-'
 local currentIP             = '-'
@@ -43,6 +48,8 @@ Script.serveEvent("CSK_DeviceNetworkConfig.OnNewParameterName", "DeviceNetworkCo
 Script.serveEvent("CSK_DeviceNetworkConfig.OnDataLoadedOnReboot", "DeviceNetworkConfig_OnDataLoadedOnReboot")
 
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewEthernetConfigStatus", "DeviceNetworkConfig_OnNewEthernetConfigStatus")
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusMessage', 'DeviceNetworkConfig_OnNewStatusMessage')
+
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewInterfaceTable", "DeviceNetworkConfig_OnNewInterfaceTable")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewIP", "DeviceNetworkConfig_OnNewIP")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnNewSubnetMask", "DeviceNetworkConfig_OnNewSubnetMask")
@@ -69,8 +76,10 @@ Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeActive', 'DeviceNetw
 Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusListOfEthernetInterfaces', 'DeviceNetworkConfig_OnNewStatusListOfEthernetInterfaces')
 Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeInterfaces', 'DeviceNetworkConfig_OnNewStatusBridgeInterfaces')
 
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusIsCCBridge', 'DeviceNetworkConfig_OnNewStatusIsCCBridge')
 Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeDelay', 'DeviceNetworkConfig_OnNewStatusBridgeDelay')
 Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusBridgeTestTime', 'DeviceNetworkConfig_OnNewStatusBridgeTestTime')
+Script.serveEvent('CSK_DeviceNetworkConfig.OnNewStatusShowBridgeSetupDiffers', 'DeviceNetworkConfig_OnNewStatusShowBridgeSetupDiffers')
 
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelOperatorActive", "DeviceNetworkConfig_OnUserLevelOperatorActive")
 Script.serveEvent("CSK_DeviceNetworkConfig.OnUserLevelMaintenanceActive", "DeviceNetworkConfig_OnUserLevelMaintenanceActive")
@@ -162,6 +171,12 @@ local function setDeviceNetworkConfig_Model_Handle(handle)
 end
 
 -- ********************* UI Setting / Submit Functions Start ********************
+
+local function handleOnHideMessageExpired()
+  Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusMessage", '')
+end
+Timer.register(tmrHideMessage, 'OnExpired', handleOnHideMessageExpired)
 
 local function refresh()
   interfacesTable = deviceNetworkConfig_Model.refreshInterfaces()
@@ -364,17 +379,26 @@ local function handleOnExpiredTmrDeviceNetworkConfig()
   Script.notifyEvent("DeviceNetworkConfig_OnNewDefaultGateway", '-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewInterfaceChoice",'-')
   Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'empty')
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusMessage", '')
 
-  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusShowBridgeFeature", deviceNetworkConfig_Model.showBridgeFeature)
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusShowBridgeFeature", _G.availableAPIs.bridge)
 
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeIP", deviceNetworkConfig_Model.parameters.bridgeIP)
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeSubnetMask", deviceNetworkConfig_Model.parameters.bridgeSubnetMask)
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeGateway", deviceNetworkConfig_Model.parameters.bridgeGateway)
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeActive", deviceNetworkConfig_Model.parameters.bridgeActive)
 
+  deviceNetworkConfig_Model.tempBridgeIP = deviceNetworkConfig_Model.parameters.bridgeIP
+  deviceNetworkConfig_Model.tempBridgeSubnetMask = deviceNetworkConfig_Model.parameters.bridgeSubnetMask
+  deviceNetworkConfig_Model.tempBridgeGateway = deviceNetworkConfig_Model.parameters.bridgeGateway
+  deviceNetworkConfig_Model.tempBridgeInterfaces = deviceNetworkConfig_Model.parameters.bridgeInterfaces
+
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusShowBridgeSetupDiffers", false)
+
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusListOfEthernetInterfaces", deviceNetworkConfig_Model.helperFuncs.createJsonList(deviceNetworkConfig_Model.listOfInterfaces))
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeInterfaces", deviceNetworkConfig_Model.helperFuncs.createJsonList(deviceNetworkConfig_Model.parameters.bridgeInterfaces))
 
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusIsCCBridge", availableAPIs.accessCC)
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeDelay", deviceNetworkConfig_Model.parameters.bridgeDelay)
   Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeTestTime", deviceNetworkConfig_Model.parameters.bridgeTestTime)
 
@@ -528,63 +552,180 @@ end
 Script.serveFunction("CSK_DeviceNetworkConfig.setDHCPState", setDHCPState)
 
 local function setShowBridgeFeature(status)
+  --[[
   if _G.availableAPIs.bridge then
-    deviceNetworkConfig_Model.showBridgeFeature = status
+    --deviceNetworkConfig_Model.showBridgeFeature = status
     Script.notifyEvent("DeviceNetworkConfig_OnNewStatusShowBridgeFeature", status)
   else
     _G.logger:info(nameOfModule .. ": Bridge feature not supported on device.")
     Script.notifyEvent("DeviceNetworkConfig_OnNewStatusShowBridgeFeature", false)
-  end
+  end]]
 end
 Script.serveFunction('CSK_DeviceNetworkConfig.setShowBridgeFeature', setShowBridgeFeature)
 
+local function compareBridgeSetup()
+  local ipCompare = deviceNetworkConfig_Model.parameters.bridgeIP == deviceNetworkConfig_Model.tempBridgeIP
+  local maskCompare = deviceNetworkConfig_Model.parameters.bridgeSubnetMask == deviceNetworkConfig_Model.tempBridgeSubnetMask
+  local gatewayCompare = deviceNetworkConfig_Model.parameters.bridgeGateway == deviceNetworkConfig_Model.tempBridgeGateway
+  --local interfacesCompare = deviceNetworkConfig_Model.parameters.bridgeInterfaces == deviceNetworkConfig_Model.tempBridgeInterfaces
+
+  local interfacesCompare = true
+  if #deviceNetworkConfig_Model.parameters.bridgeInterfaces == #deviceNetworkConfig_Model.tempBridgeInterfaces then
+    local tempInterfaces = {}
+    for key, value in pairs(deviceNetworkConfig_Model.parameters.bridgeInterfaces) do
+      tempInterfaces[value] = value
+    end
+
+    for key, value in pairs(deviceNetworkConfig_Model.tempBridgeInterfaces) do
+      if not tempInterfaces[value] then
+        interfacesCompare = false
+      end
+    end
+  else
+    interfacesCompare = false
+  end
+
+  Script.notifyEvent("DeviceNetworkConfig_OnNewStatusShowBridgeSetupDiffers", not (ipCompare and maskCompare and gatewayCompare and interfacesCompare))
+end
+
 local function setBridgeIP(ip)
-  deviceNetworkConfig_Model.parameters.bridgeIP = ip
+  if deviceNetworkConfig_Model.helperFuncs.checkIP(ip) then
+    local ipNotExists = true
+    for _, value in pairs(deviceNetworkConfig_Model.interfacesTable) do
+      if value.ipAddress == ip then
+        ipNotExists = false
+      end
+    end
+    if ipNotExists then
+      deviceNetworkConfig_Model.tempBridgeIP = ip
+    else
+      Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeIP", deviceNetworkConfig_Model.parameters.bridgeIP)
+      Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'SetupIssue')
+      Script.notifyEvent("DeviceNetworkConfig_OnNewStatusMessage", 'IP not valid')
+      tmrHideMessage:start()
+    end
+  else
+    Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeIP", deviceNetworkConfig_Model.parameters.bridgeIP)
+    Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'SetupIssue')
+    Script.notifyEvent("DeviceNetworkConfig_OnNewStatusMessage", 'IP not valid')
+    tmrHideMessage:start()
+  end
+  compareBridgeSetup()
 end
 Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeIP', setBridgeIP)
 
 local function setBridgeSubnetMask(mask)
-  deviceNetworkConfig_Model.parameters.bridgeSubnetMask = mask
+  if deviceNetworkConfig_Model.helperFuncs.maskToBitValue(mask) then
+    deviceNetworkConfig_Model.tempBridgeSubnetMask = mask
+  else
+    Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeSubnetMask", deviceNetworkConfig_Model.parameters.bridgeSubnetMask)
+    Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'SetupIssue')
+    Script.notifyEvent("DeviceNetworkConfig_OnNewStatusMessage", 'Subnet mask not valid')
+    tmrHideMessage:start()
+  end
+  compareBridgeSetup()
 end
 Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeSubnetMask', setBridgeSubnetMask)
 
 local function setBridgeGateway(gateway)
-  deviceNetworkConfig_Model.parameters.bridgeGateway = gateway
+  if deviceNetworkConfig_Model.helperFuncs.checkIP(gateway) then
+    deviceNetworkConfig_Model.tempBridgeGateway = gateway
+  else
+    Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeGateway", deviceNetworkConfig_Model.parameters.bridgeGateway)
+    Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'SetupIssue')
+    Script.notifyEvent("DeviceNetworkConfig_OnNewStatusMessage", 'IP not valid')
+    tmrHideMessage:start()
+  end
+  compareBridgeSetup()
 end
 Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeGateway', setBridgeGateway)
 
-local function setBridgeActive(status)
-  if _G.availableAPIs.bridge then
-    deviceNetworkConfig_Model.parameters.bridgeActive = status
-
-    if status then
-      deviceNetworkConfig_Model.createBridge()
-    else
-      deviceNetworkConfig_Model.deleteBridge()
+local function setBridgeInterfaces(interfaces)
+  if #interfaces < #deviceNetworkConfig_Model.listOfInterfaces then
+    deviceNetworkConfig_Model.tempBridgeInterfaces = {}
+    for _, value in pairs(interfaces) do
+      table.insert(deviceNetworkConfig_Model.tempBridgeInterfaces, value)
     end
   else
-    _G.logger:info(nameOfModule .. ": Bridge feature not supported on device.")
+    Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeInterfaces", deviceNetworkConfig_Model.helperFuncs.createJsonList(deviceNetworkConfig_Model.parameters.bridgeInterfaces))
+    Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'SetupIssue')
+    Script.notifyEvent("DeviceNetworkConfig_OnNewStatusMessage", 'IP not valid')
+    tmrHideMessage:start()
   end
-end
-Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeActive', setBridgeActive)
-
-local function setBridgeInterfaces(interfaces)
-  deviceNetworkConfig_Model.parameters.bridgeInterfaces = {}
-  for _, value in pairs(interfaces) do
-    table.insert(deviceNetworkConfig_Model.parameters.bridgeInterfaces, value)
-  end
+  compareBridgeSetup()
 end
 Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeInterfaces', setBridgeInterfaces)
 
 local function setBridgeDelay(delay)
   deviceNetworkConfig_Model.parameters.bridgeDelay = delay
+  CSK_DeviceNetworkConfig.sendParameters()
 end
 Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeDelay', setBridgeDelay)
 
 local function setBridgeTestTime(time)
   deviceNetworkConfig_Model.parameters.bridgeTestTime = time
+  deviceNetworkConfig_Model.startBridgeTestTimer() -- Will stop the timer
+  CSK_DeviceNetworkConfig.sendParameters()
 end
 Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeTestTime', setBridgeTestTime)
+
+local function setBridgeActive(status)
+  --[[
+  if _G.availableAPIs.bridge then
+    deviceNetworkConfig_Model.parameters.bridgeActive = status
+    if status then
+      local success = deviceNetworkConfig_Model.createBridge()
+      if not success then
+        deviceNetworkConfig_Model.parameters.bridgeActive = false
+        Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeActive", deviceNetworkConfig_Model.parameters.bridgeActive)
+        Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'SetupIssue')
+        tmrHideMessage:start()
+      end
+    else
+      local success = deviceNetworkConfig_Model.deleteBridge()
+      if not success then
+        deviceNetworkConfig_Model.parameters.bridgeActive = true
+        Script.notifyEvent("DeviceNetworkConfig_OnNewStatusBridgeActive", deviceNetworkConfig_Model.parameters.bridgeActive)
+        Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'SetupIssue')
+        tmrHideMessage:start()
+      end
+    end
+  else
+    _G.logger:info(nameOfModule .. ": Bridge feature not supported on device.")
+  end
+  ]]
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.setBridgeActive', setBridgeActive)
+
+local function applyBridgeSetup()
+  if _G.availableAPIs.bridge then
+    deviceNetworkConfig_Model.parameters.bridgeIP = deviceNetworkConfig_Model.tempBridgeIP
+    deviceNetworkConfig_Model.parameters.bridgeSubnetMask = deviceNetworkConfig_Model.tempBridgeSubnetMask
+    deviceNetworkConfig_Model.parameters.bridgeGateway = deviceNetworkConfig_Model.tempBridgeGateway
+    deviceNetworkConfig_Model.parameters.bridgeInterfaces = deviceNetworkConfig_Model.tempBridgeInterfaces
+
+    CSK_DeviceNetworkConfig.sendParameters()
+
+    if #deviceNetworkConfig_Model.parameters.bridgeInterfaces == 0 then
+      local success = deviceNetworkConfig_Model.deleteBridge()
+      if not success then
+        deviceNetworkConfig_Model.checkCCBridge()
+        Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'SetupIssue')
+        tmrHideMessage:start()
+      end
+    else
+      local success = deviceNetworkConfig_Model.createBridge()
+      if not success then
+        deviceNetworkConfig_Model.checkCCBridge()
+        Script.notifyEvent("DeviceNetworkConfig_OnNewEthernetConfigStatus", 'SetupIssue')
+        tmrHideMessage:start()
+      end
+    end
+  else
+    _G.logger:info(nameOfModule .. ": Bridge feature not supported on device.")
+  end
+end
+Script.serveFunction('CSK_DeviceNetworkConfig.applyBridgeSetup', applyBridgeSetup)
 
 local function setPingIPAddress(ping_ip)
   deviceNetworkConfig_Model.ping_ip_adress = ping_ip
@@ -680,15 +821,19 @@ local function loadParameters()
         updateNameservers(deviceNetworkConfig_Model.parameters.nameservers)
       end
 
-      if _G.availableAPIs.bridge and deviceNetworkConfig_Model.parameters.bridgeActive then
-        deviceNetworkConfig_Model.showBridgeFeature = true
-        if deviceNetworkConfig_Model.parameters.bridgeDelay ~= 0 then
-          deviceNetworkConfig_Model.bridgeDelayTimer:setExpirationTime(deviceNetworkConfig_Model.parameters.bridgeDelay*1000)
-          deviceNetworkConfig_Model.bridgeDelayTimer:start()
-          _G.logger:info(nameOfModule .. ": Start timer for bridge delay")
-        else
-          deviceNetworkConfig_Model.createBridge()
+      if not availableAPIs.accessCC then
+        if _G.availableAPIs.bridge and deviceNetworkConfig_Model.parameters.bridgeActive then
+          --deviceNetworkConfig_Model.showBridgeFeature = true
+          if deviceNetworkConfig_Model.parameters.bridgeDelay ~= 0 then
+            deviceNetworkConfig_Model.bridgeDelayTimer:setExpirationTime(deviceNetworkConfig_Model.parameters.bridgeDelay*1000)
+            deviceNetworkConfig_Model.bridgeDelayTimer:start()
+            _G.logger:info(nameOfModule .. ": Start timer for bridge delay")
+          else
+            deviceNetworkConfig_Model.createBridge()
+          end
         end
+      else
+        deviceNetworkConfig_Model.checkCCBridge()
       end
 
       CSK_DeviceNetworkConfig.pageCalled()

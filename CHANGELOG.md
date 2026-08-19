@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 2.4.0
+
+### Improvements
+- Support devices with ControlCenter
+
+### Bugfix
+- Updated legacy UI bindings
+
 ## Release 2.3.0
 
 ### New features
