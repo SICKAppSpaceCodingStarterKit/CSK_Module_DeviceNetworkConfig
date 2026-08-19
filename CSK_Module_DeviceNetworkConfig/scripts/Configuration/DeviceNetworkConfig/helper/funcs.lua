@@ -21,6 +21,82 @@ funcs.json = require('Configuration/DeviceNetworkConfig/helper/Json')
 --**********************Start Function Scope *******************************
 --**************************************************************************
 
+--- Convert subnet mask to bit value (e.g. "255.255.255.0" -> 24)
+---@param mask string Subnetmask string
+---@return int bitValue Subnet mask as bit value
+local function maskToBitValue(mask)
+    local bitValue = 0
+    local binaryMask = ""
+
+    local count = 0
+
+    for octet in string.gmatch(mask, "(%d+)") do
+        octet = tonumber(octet)
+        count = count + 1
+
+        -- Check range 0–255
+        if not octet or octet < 0 or octet > 255 then
+            return nil, "Invalid octet value"
+        end
+
+        -- Convert octet to 8-bit binary string
+        local bin = ""
+        for i = 7, 0, -1 do
+            if octet >= 2^i then
+                bin = bin .. "1"
+                octet = octet - 2^i
+            else
+                bin = bin .. "0"
+            end
+        end
+
+        binaryMask = binaryMask .. bin
+    end
+
+    -- Must have exactly 4 octets
+    if count ~= 4 then
+        return nil, "Invalid mask format"
+    end
+
+    -- Check contiguous ones (valid subnet mask rule)
+    -- Must match: 111...1100...00
+    if not binaryMask:match("^1*0*$") then
+        return nil, "Mask is not contiguous"
+    end
+
+    -- Count bits set to 1
+    local _, ones = binaryMask:gsub("1", "")
+    bitValue = ones
+
+    return bitValue
+end
+funcs.maskToBitValue = maskToBitValue
+
+-- Convert bit value to subnet mask (e.g. 24 -> "255.255.255.0")
+---@param bitValue int Subnet mask as bit value
+---@return string mask Subnetmask string
+local function bitValueToMask(bitValue)
+  assert(type(bitValue) == "number" and bitValue >= 0 and bitValue <= 32, "Invalid Bit value")
+
+  local mask = {}
+
+  for i = 1, 4 do
+      if bitValue >= 8 then
+          table.insert(mask, "255")
+          bitValue = bitValue - 8
+      elseif bitValue > 0 then
+          local value = 256 - 2^(8 - bitValue)
+          table.insert(mask, tostring(math.floor(value)))
+          bitValue = 0
+      else
+          table.insert(mask, "0")
+      end
+  end
+
+  return table.concat(mask, ".")
+end
+funcs.bitValueToMask = bitValueToMask
+
 --- Function to check if inserted string is a valid IP
 ---@param ip string String to check for IP
 ---@return boolean status Result if IP is valid

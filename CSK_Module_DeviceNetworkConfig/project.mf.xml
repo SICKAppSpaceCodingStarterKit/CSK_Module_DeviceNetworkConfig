@@ -172,6 +172,18 @@ See following descriptions of events/functions regarding further information.
                     <desc>Notify list of available ethernet interfaces.</desc>
                     <param desc="List of interfaces." multiplicity="1" name="list" type="string"/>
                 </event>
+                <event name="OnNewStatusIsCCBridge">
+                    <desc>Notify if bridge is managed via ControlCenter.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewStatusMessage">
+                    <desc>Notify message to show on UI.</desc>
+                    <param desc="Message to show." multiplicity="1" name="message" type="string"/>
+                </event>
+                <event name="OnNewStatusShowBridgeSetupDiffers">
+                    <desc>Notify if currenty set configuration differs to currently active bridge setup.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
                 <function name="pageCalled">
                     <desc>Function to register "OnResume" of the module UI (only as helper function).</desc>
                     <return desc="Empty string (only needed to simplify binding)." multiplicity="1" name="empty" type="string"/>
@@ -296,10 +308,13 @@ See following descriptions of events/functions regarding further information.
                     <desc>Function to set time to reset bridge. This helps to test the bridge setup.</desc>
                     <param desc="Time in minutes to wait before deleting the bridge. Set to 0 to keep bridge." multiplicity="1" name="time" type="int"/>
                 </function>
+                <function name="applyBridgeSetup">
+                    <desc>Function to apply configured bridge configuration.</desc>
+                </function>
             </serves>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">2.3.0</meta>
+        <meta key="version">2.4.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>

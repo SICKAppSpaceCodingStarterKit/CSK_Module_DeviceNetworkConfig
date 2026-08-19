@@ -44,23 +44,32 @@
 											</span>
                                         </davinci-callout>
                                         <stacked-view id="SV_ShowStatus">
+                                            <stacked-pane id="SP_Error" value="error">
+                                                <davinci-callout id="Callout3" type="error">
+                                                    <span>New config NOT accepted</span>
+                                                </davinci-callout>
+                                            </stacked-pane>
                                             <stacked-pane id="SP_Processing" value="processing">
                                                 <davinci-callout id="Callout1" type="info">
                                                     <span>... Currently processing ...</span>
                                                 </davinci-callout>
                                             </stacked-pane>
-                                            <crown-edpws-binding property="value"
-                                                name="CSK_DeviceNetworkConfig/OnNewEthernetConfigStatus"
-                                                update-on-resume>
-                                            </crown-edpws-binding>
+                                            <crown-on property="value"
+                                                crown-event="CSK_DeviceNetworkConfig/OnNewEthernetConfigStatus">
+                                            </crown-on>
                                             <stacked-pane id="SP_Success" value="success">
                                                 <davinci-callout id="Callout2" type="success">
                                                     <span>New config accepted</span>
                                                 </davinci-callout>
                                             </stacked-pane>
-                                            <stacked-pane id="SP_Error" value="error">
-                                                <davinci-callout id="Callout3" type="error">
-                                                    <span>New config NOT accepted</span>
+                                            <stacked-pane id="SP_SetupIssue" value="SetupIssue">
+                                                <davinci-callout id="Callout_SetupIssue" type="info">
+                                                    <span>Problem with IP setup! Please check...</span>
+                                                </davinci-callout>
+                                            </stacked-pane>
+                                            <stacked-pane id="SP_Restart" value="Restart">
+                                                <davinci-callout id="Callout_Restart" type="info">
+                                                    <span>Restart of device...</span>
                                                 </davinci-callout>
                                             </stacked-pane>
                                             <stacked-pane id="SP_empty" value="empty"></stacked-pane>
@@ -78,13 +87,13 @@
                                             </curie-table-column>
                                             <curie-table-column id="Connected" header="Connected">
                                             </curie-table-column>
-                                            <crown-edpws-binding property="data"
-                                                name="CSK_DeviceNetworkConfig/OnNewInterfaceTable" update-on-resume>
-                                            </crown-edpws-binding>
-                                            <crown-binding event="row-selected"
-                                                name="CSK_DeviceNetworkConfig/selectInterface"
-                                                path="param/args/row_selected" auto-commit>
-                                            </crown-binding>
+                                            <crown-on property="data"
+                                                crown-event="CSK_DeviceNetworkConfig/OnNewInterfaceTable">
+                                            </crown-on>
+                                            <crown-set event="row-selected"
+                                                crown-function="CSK_DeviceNetworkConfig/selectInterface"
+                                                protocol="crownMSGPACK" crown-path="row_selected">
+                                            </crown-set>
                                             <curie-table-column id="MACAddress" header="MAC address">
                                             </curie-table-column>
                                         </curie-table>
@@ -111,15 +120,15 @@
                                                             <layout-column id="ColumnLayout14"
                                                                 style="align-items: center">
                                                                 <davinci-button id="Button_Refresh"
-                                                                    class="myCustomButton_CSK_Module_DeviceNetworkConfig" type="outline"
-                                                                    title="Refresh list">
+                                                                    class="myCustomButton_CSK_Module_DeviceNetworkConfig"
+                                                                    type="outline" title="Refresh list">
                                                                     <davinci-icon icon="navigation/refresh">
                                                                     </davinci-icon>
                                                                     <span></span>
-                                                                    <crown-binding event="submit"
-                                                                        name="CSK_DeviceNetworkConfig/refresh"
-                                                                        auto-commit>
-                                                                    </crown-binding>
+                                                                    <crown-set event="submit"
+                                                                        crown-function="CSK_DeviceNetworkConfig/refresh"
+                                                                        protocol="crownMSGPACK">
+                                                                    </crown-set>
                                                                 </davinci-button>
                                                             </layout-column>
                                                             <layout-column id="ColumnLayout3"
@@ -138,22 +147,19 @@
                                                                     </davinci-value-display>
                                                                     <davinci-text-field id="TF_IP" type="text"
                                                                         autocomplete="on">
-                                                                        <crown-edpws-binding property="value"
-                                                                            name="CSK_DeviceNetworkConfig/OnNewIP"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-edpws-binding property="error"
-                                                                            name="CSK_DeviceNetworkConfig/OnIPError"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-edpws-binding property="disabled"
-                                                                            name="CSK_DeviceNetworkConfig/OnIPDisabled"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-binding event="change"
-                                                                            name="CSK_DeviceNetworkConfig/setInterfaceIP"
-                                                                            path="param/args/newIP" auto-commit>
-                                                                        </crown-binding>
+                                                                        <crown-on property="value"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnNewIP">
+                                                                        </crown-on>
+                                                                        <crown-on property="error"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnIPError">
+                                                                        </crown-on>
+                                                                        <crown-on property="disabled"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnIPDisabled">
+                                                                        </crown-on>
+                                                                        <crown-set event="change"
+                                                                            crown-function="CSK_DeviceNetworkConfig/setInterfaceIP"
+                                                                            protocol="crownMSGPACK" crown-path="newIP">
+                                                                        </crown-set>
                                                                     </davinci-text-field>
                                                                 </layout-row>
                                                             </layout-column>
@@ -165,22 +171,20 @@
                                                                     </davinci-value-display>
                                                                     <davinci-text-field id="TF_Subnet" type="text"
                                                                         autocomplete="on">
-                                                                        <crown-edpws-binding property="value"
-                                                                            name="CSK_DeviceNetworkConfig/OnNewSubnetMask"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-edpws-binding property="disabled"
-                                                                            name="CSK_DeviceNetworkConfig/OnSubnetDisabled"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-edpws-binding property="error"
-                                                                            name="CSK_DeviceNetworkConfig/OnSubnetError"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-binding event="change"
-                                                                            name="CSK_DeviceNetworkConfig/setSubnetMask"
-                                                                            path="param/args/newSubnetMask" auto-commit>
-                                                                        </crown-binding>
+                                                                        <crown-on property="value"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnNewSubnetMask">
+                                                                        </crown-on>
+                                                                        <crown-on property="disabled"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnSubnetDisabled">
+                                                                        </crown-on>
+                                                                        <crown-on property="error"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnSubnetError">
+                                                                        </crown-on>
+                                                                        <crown-set event="change"
+                                                                            crown-function="CSK_DeviceNetworkConfig/setSubnetMask"
+                                                                            protocol="crownMSGPACK"
+                                                                            crown-path="newSubnetMask">
+                                                                        </crown-set>
                                                                     </davinci-text-field>
                                                                 </layout-row>
                                                             </layout-column>
@@ -192,23 +196,20 @@
                                                                     </davinci-value-display>
                                                                     <davinci-text-field id="TF_Gateway" type="text"
                                                                         autocomplete="on">
-                                                                        <crown-edpws-binding property="value"
-                                                                            name="CSK_DeviceNetworkConfig/OnNewDefaultGateway"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-edpws-binding property="disabled"
-                                                                            name="CSK_DeviceNetworkConfig/OnGatewayDisabled"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-edpws-binding property="error"
-                                                                            name="CSK_DeviceNetworkConfig/OnGatewayError"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-binding event="change"
-                                                                            name="CSK_DeviceNetworkConfig/setDefaultGateway"
-                                                                            path="param/args/newDefaultGateway"
-                                                                            auto-commit>
-                                                                        </crown-binding>
+                                                                        <crown-on property="value"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnNewDefaultGateway">
+                                                                        </crown-on>
+                                                                        <crown-on property="disabled"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnGatewayDisabled">
+                                                                        </crown-on>
+                                                                        <crown-on property="error"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnGatewayError">
+                                                                        </crown-on>
+                                                                        <crown-set event="change"
+                                                                            crown-function="CSK_DeviceNetworkConfig/setDefaultGateway"
+                                                                            protocol="crownMSGPACK"
+                                                                            crown-path="newDefaultGateway">
+                                                                        </crown-set>
                                                                     </davinci-text-field>
                                                                 </layout-row>
                                                             </layout-column>
@@ -220,47 +221,46 @@
                                                                     </davinci-value-display>
                                                                     <davinci-checkbox id="CB_DHCP">
                                                                         <span></span>
-                                                                        <crown-edpws-binding property="checked"
-                                                                            name="CSK_DeviceNetworkConfig/OnNewDHCPStatus"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-edpws-binding property="disabled"
-                                                                            name="CSK_DeviceNetworkConfig/OnDHCPDisabled"
-                                                                            update-on-resume>
-                                                                        </crown-edpws-binding>
-                                                                        <crown-binding event="change"
-                                                                            name="CSK_DeviceNetworkConfig/setDHCPState"
-                                                                            path="param/args/newDHCPstate" auto-commit>
-                                                                        </crown-binding>
+                                                                        <crown-on property="checked"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnNewDHCPStatus">
+                                                                        </crown-on>
+                                                                        <crown-on property="disabled"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnDHCPDisabled">
+                                                                        </crown-on>
+                                                                        <crown-set event="change"
+                                                                            crown-function="CSK_DeviceNetworkConfig/setDHCPState"
+                                                                            protocol="crownMSGPACK"
+                                                                            crown-path="newDHCPstate">
+                                                                        </crown-set>
                                                                     </davinci-checkbox>
                                                                 </layout-row>
                                                             </layout-column>
                                                             <layout-column id="ColumnLayout16"
                                                                 style="align-items: center">
                                                                 <davinci-button id="Button_ApplyNewConfig"
-                                                                    class="myCustomButton_CSK_Module_DeviceNetworkConfig" type="outline"
+                                                                    class="myCustomButton_CSK_Module_DeviceNetworkConfig"
+                                                                    type="outline"
                                                                     title="Apply new network configuration">
                                                                     <davinci-icon icon="navigation/check">
                                                                     </davinci-icon>
                                                                     <span></span>
-                                                                    <crown-edpws-binding property="disabled"
-                                                                        name="CSK_DeviceNetworkConfig/OnApplyButtonDisabled"
-                                                                        update-on-resume>
-                                                                    </crown-edpws-binding>
-                                                                    <crown-binding event="submit"
-                                                                        name="CSK_DeviceNetworkConfig/applyConfig"
-                                                                        auto-commit>
-                                                                    </crown-binding>
+                                                                    <crown-on property="disabled"
+                                                                        crown-event="CSK_DeviceNetworkConfig/OnApplyButtonDisabled">
+                                                                    </crown-on>
+                                                                    <crown-set event="submit"
+                                                                        crown-function="CSK_DeviceNetworkConfig/applyConfig"
+                                                                        protocol="crownMSGPACK">
+                                                                    </crown-set>
                                                                 </davinci-button>
                                                             </layout-column>
                                                         </layout-row>
                                                     </layout-column>
                                                 </layout-row>
                                             </stacked-pane>
-                                            <crown-edpws-binding property="value"
-                                                name="CSK_DeviceNetworkConfig/OnNewStatusSetFunctionsNotSupported"
-                                                update-on-resume converter="function(value) {return value.toString();}">
-                                            </crown-edpws-binding>
+                                            <crown-on property="value"
+                                                crown-event="CSK_DeviceNetworkConfig/OnNewStatusSetFunctionsNotSupported"
+                                                converter="function(value) {return value.toString();}">
+                                            </crown-on>
                                         </stacked-view>
                                     </layout-column>
                                 </layout-row>
@@ -299,10 +299,9 @@
                                                             crown-function="CSK_DeviceNetworkConfig/addDNS"
                                                             protocol="crownMSGPACK">
                                                         </crown-set>
-                                                        <crown-edpws-binding property="disabled"
-                                                            name="CSK_DeviceNetworkConfig/OnNewStatusSetFunctionsNotSupported"
-                                                            update-on-resume>
-                                                        </crown-edpws-binding>
+                                                        <crown-on property="disabled"
+                                                            crown-event="CSK_DeviceNetworkConfig/OnNewStatusSetFunctionsNotSupported">
+                                                        </crown-on>
                                                     </davinci-button>
                                                     <davinci-button id="BTN_RemoveDns"
                                                         class="myCustomButton_CSK_Module_DeviceNetworkConfig"
@@ -313,10 +312,9 @@
                                                             crown-function="CSK_DeviceNetworkConfig/removeDNS"
                                                             protocol="crownMSGPACK">
                                                         </crown-set>
-                                                        <crown-edpws-binding property="disabled"
-                                                            name="CSK_DeviceNetworkConfig/OnNewStatusSetFunctionsNotSupported"
-                                                            update-on-resume>
-                                                        </crown-edpws-binding>
+                                                        <crown-on property="disabled"
+                                                            crown-event="CSK_DeviceNetworkConfig/OnNewStatusSetFunctionsNotSupported">
+                                                        </crown-on>
                                                     </davinci-button>
                                                 </layout-row>
                                             </layout-column>
@@ -366,10 +364,10 @@
                                                 <layout-row id="RowLayout3">
                                                     <davinci-text-field id="TF_PingIP" type="text" label="Ping"
                                                         placeholder="IPv4 address">
-                                                        <crown-binding event="change"
-                                                            name="CSK_DeviceNetworkConfig/setPingIPAddress"
-                                                            path="param/args/ping_ip" auto-commit>
-                                                        </crown-binding>
+                                                        <crown-set event="change"
+                                                            crown-function="CSK_DeviceNetworkConfig/setPingIPAddress"
+                                                            protocol="crownMSGPACK" crown-path="ping_ip">
+                                                        </crown-set>
                                                     </davinci-text-field>
                                                     <davinci-button id="Button_Ping"
                                                         class="myCustomButton_CSK_Module_DeviceNetworkConfig"
@@ -383,10 +381,9 @@
                                                     </davinci-button>
                                                     <davinci-status-indicator id="SI_Ping" style="align-self: center">
                                                         <span></span>
-                                                        <crown-edpws-binding property="status"
-                                                            name="CSK_DeviceNetworkConfig/OnNewPingResult"
-                                                            update-on-resume>
-                                                        </crown-edpws-binding>
+                                                        <crown-on property="status"
+                                                            crown-event="CSK_DeviceNetworkConfig/OnNewPingResult">
+                                                        </crown-on>
                                                     </davinci-status-indicator>
                                                     <davinci-value-display id="VD_PingDetails"
                                                         style="align-self: center">
@@ -400,131 +397,118 @@
                                         <layout-row id="RowLayout31"
                                             class="myCustomSpacerVert10_CSK_Module_DeviceNetworkConfig">
                                         </layout-row>
-                                        <layout-row id="RowLayout27">
-                                            <layout-column id="ColumnLayout23"
-                                                class="myCustomFrame_CSK_Module_DeviceNetworkConfig"
-                                                style="align-items: stretch">
-                                                <davinci-value-display id="VD_Bridge"
-                                                    class="myCustomFrameLabel_CSK_Module_DeviceNetworkConfig"
-                                                    label="Bridge" style="align-self: flex-start">
-                                                </davinci-value-display>
-                                                <layout-row id="RowLayout26">
-                                                    <davinci-toggle-switch id="TS_BridgeActive"
-                                                        title="Show bridge features">
-                                                        <crown-edpws-binding property="checked"
-                                                            name="CSK_DeviceNetworkConfig/OnNewStatusShowBridgeFeature"
-                                                            update-on-resume>
-                                                        </crown-edpws-binding>
-                                                        <crown-binding event="change"
-                                                            name="CSK_DeviceNetworkConfig/setShowBridgeFeature"
-                                                            path="param/args/status" auto-commit>
-                                                        </crown-binding>
-                                                    </davinci-toggle-switch>
-                                                </layout-row>
-                                                <stacked-view id="SV_Bridge">
-                                                    <stacked-pane id="SP_BridgeActive" value="true">
+                                        <stacked-view id="SV_ShowBridgeFeature">
+                                            <stacked-pane id="SP_ShowBridgeFeature" value="true">
+                                                <layout-row id="RowLayout27">
+                                                    <layout-column id="ColumnLayout23"
+                                                        class="myCustomFrame_CSK_Module_DeviceNetworkConfig"
+                                                        style="align-items: stretch">
+                                                        <davinci-value-display id="VD_Bridge"
+                                                            class="myCustomFrameLabel_CSK_Module_DeviceNetworkConfig"
+                                                            label="Bridge" style="align-self: flex-start">
+                                                        </davinci-value-display>
                                                         <layout-row id="RowLayout25">
                                                             <layout-column id="ColumnLayout25"
                                                                 style="align-items: stretch">
                                                                 <davinci-callout id="Callout_Bridge" type="warning">
                                                                     <span>
-												Important: With a wrong setup this might make your device unaccessable. So test your setup first with a limited time period!
+												Important: With a wrong setup this might make your device inaccessible. So test your setup first with a limited time period! If it works as expected, set the &quot;Stop bridge&quot; timer to &quot;0&quot; and save the configuration. It is not possible to add ALL interfaces at once to the bridge. To change an existing bridge setup you first need to delete the old bridge (deselect all interfaces and apply), reconnect to the device and create a new bridge.
 												</span>
                                                                 </davinci-callout>
-												<davinci-callout id="Callout_BridgeTime" type="info">
-												<span>
-												It can take about a minute to activate the new bridge setup.
-												</span>
-												</davinci-callout>
+                                                                <stacked-view id="SV_ShowStatus2">
+                                                                    <stacked-pane id="SP_Error2" value="error">
+                                                                        <davinci-callout id="Callout32" type="error">
+                                                                            <span>New config NOT accepted</span>
+                                                                        </davinci-callout>
+                                                                    </stacked-pane>
+                                                                    <stacked-pane id="SP_Processing2"
+                                                                        value="processing">
+                                                                        <davinci-callout id="Callout12" type="info">
+                                                                            <span>... Currently processing ...</span>
+                                                                        </davinci-callout>
+                                                                    </stacked-pane>
+                                                                    <crown-on property="value"
+                                                                        crown-event="CSK_DeviceNetworkConfig/OnNewEthernetConfigStatus">
+                                                                    </crown-on>
+                                                                    <stacked-pane id="SP_Success2" value="success">
+                                                                        <davinci-callout id="Callout22" type="success">
+                                                                            <span>New config accepted</span>
+                                                                        </davinci-callout>
+                                                                    </stacked-pane>
+                                                                    <stacked-pane id="SP_SetupIssue2"
+                                                                        value="SetupIssue">
+                                                                        <davinci-callout id="Callout_SetupIssue2"
+                                                                            type="info">
+                                                                            <span>Problem with IP setup! Please check...</span>
+                                                                        </davinci-callout>
+                                                                    </stacked-pane>
+                                                                    <stacked-pane id="SP_Restart2" value="Restart">
+                                                                        <davinci-callout id="Callout_Restart2"
+                                                                            type="info">
+                                                                            <span>Restart of device...</span>
+                                                                        </davinci-callout>
+                                                                    </stacked-pane>
+                                                                    <stacked-pane id="SP_empty2" value="empty">
+                                                                    </stacked-pane>
+                                                                </stacked-view>
                                                                 <layout-row id="RowLayout30">
                                                                     <layout-column id="ColumnLayout21"
                                                                         style="align-items: stretch">
                                                                         <davinci-text-field id="TF_BridgeIP" type="text"
                                                                             label="Bridge IP"
                                                                             title="IP to use for bridge">
-                                                                            <crown-edpws-binding property="value"
-                                                                                name="CSK_DeviceNetworkConfig/OnNewStatusBridgeIP"
-                                                                                update-on-resume>
-                                                                            </crown-edpws-binding>
-                                                                            <crown-binding event="change"
-                                                                                name="CSK_DeviceNetworkConfig/setBridgeIP"
-                                                                                path="param/args/ip" auto-commit>
-                                                                            </crown-binding>
+                                                                            <crown-on property="value"
+                                                                                crown-event="CSK_DeviceNetworkConfig/OnNewStatusBridgeIP">
+                                                                            </crown-on>
+                                                                            <crown-set event="change"
+                                                                                crown-function="CSK_DeviceNetworkConfig/setBridgeIP"
+                                                                                protocol="crownMSGPACK" crown-path="ip">
+                                                                            </crown-set>
                                                                         </davinci-text-field>
                                                                         <davinci-text-field id="TF_BridgeSubnetMask"
                                                                             type="text" label="Bridge subnet mask"
                                                                             title="Subnet mask to use for bridge">
-                                                                            <crown-edpws-binding property="value"
-                                                                                name="CSK_DeviceNetworkConfig/OnNewStatusBridgeSubnetMask"
-                                                                                update-on-resume>
-                                                                            </crown-edpws-binding>
-                                                                            <crown-binding event="change"
-                                                                                name="CSK_DeviceNetworkConfig/setBridgeSubnetMask"
-                                                                                path="param/args/mask" auto-commit>
-                                                                            </crown-binding>
-                                                                        </davinci-text-field>
-                                                                        <davinci-text-field id="TF_BridgeGateway"
-                                                                            type="text" label="Bridge gateway"
-                                                                            title="Gateway to use for bridge.">
-                                                                            <crown-edpws-binding property="value"
-                                                                                name="CSK_DeviceNetworkConfig/OnNewStatusBridgeGateway"
-                                                                                update-on-resume>
-                                                                            </crown-edpws-binding>
-                                                                            <crown-binding event="change"
-                                                                                name="CSK_DeviceNetworkConfig/setBridgeGateway"
-                                                                                path="param/args/gateway" auto-commit>
-                                                                            </crown-binding>
+                                                                            <crown-on property="value"
+                                                                                crown-event="CSK_DeviceNetworkConfig/OnNewStatusBridgeSubnetMask">
+                                                                            </crown-on>
+                                                                            <crown-set event="change"
+                                                                                crown-function="CSK_DeviceNetworkConfig/setBridgeSubnetMask"
+                                                                                protocol="crownMSGPACK"
+                                                                                crown-path="mask">
+                                                                            </crown-set>
                                                                         </davinci-text-field>
                                                                     </layout-column>
                                                                     <layout-column id="ColumnLayout24"
                                                                         style="align-items: stretch">
-                                                                        <layout-row id="RowLayout33"
-                                                                            style="align-items: center; flex-grow: 0; flex-shrink: 0">
-                                                                            <layout-column id="ColumnLayout30"
-                                                                                style="align-items: stretch; flex-grow: 5">
-                                                                                <davinci-multi-select
-                                                                                    id="MS_BridgeInterfaces"
-                                                                                    title="Interfaces to include in bridge"
-                                                                                    label="Interfaces">
-                                                                                    <crown-edpws-binding property="data"
-                                                                                        name="CSK_DeviceNetworkConfig/OnNewStatusListOfEthernetInterfaces"
-                                                                                        update-on-resume
-                                                                                        converter="convertToList">
-                                                                                    </crown-edpws-binding>
-                                                                                    <crown-binding event="change"
-                                                                                        name="CSK_DeviceNetworkConfig/setBridgeInterfaces"
-                                                                                        path="param/args/interfaces"
-                                                                                        auto-commit>
-                                                                                    </crown-binding>
-                                                                                    <crown-edpws-binding
-                                                                                        property="values"
-                                                                                        name="CSK_DeviceNetworkConfig/OnNewStatusBridgeInterfaces"
-                                                                                        update-on-resume
-                                                                                        converter="convertToList">
-                                                                                    </crown-edpws-binding>
-                                                                                </davinci-multi-select>
-                                                                            </layout-column>
-                                                                            <layout-column id="ColumnLayout31"
-                                                                                style="align-items: stretch">
-                                                                                <davinci-value-display
-                                                                                    id="VD_BridgeActivate"
-                                                                                    value="Activate">
-                                                                                </davinci-value-display>
-                                                                                <davinci-toggle-switch id="SW_RunBridge"
-                                                                                    title="Activate bridge">
-                                                                                    <crown-edpws-binding
-                                                                                        property="checked"
-                                                                                        name="CSK_DeviceNetworkConfig/OnNewStatusBridgeActive"
-                                                                                        update-on-resume>
-                                                                                    </crown-edpws-binding>
-                                                                                    <crown-binding event="change"
-                                                                                        name="CSK_DeviceNetworkConfig/setBridgeActive"
-                                                                                        path="param/args/status"
-                                                                                        auto-commit>
-                                                                                    </crown-binding>
-                                                                                </davinci-toggle-switch>
-                                                                            </layout-column>
-                                                                        </layout-row>
+                                                                        <davinci-multi-select id="MS_BridgeInterfaces"
+                                                                            title="Interfaces to include in bridge"
+                                                                            label="Interfaces">
+                                                                            <crown-on property="data"
+                                                                                crown-event="CSK_DeviceNetworkConfig/OnNewStatusListOfEthernetInterfaces"
+                                                                                converter="convertToList">
+                                                                            </crown-on>
+                                                                            <crown-set event="change"
+                                                                                crown-function="CSK_DeviceNetworkConfig/setBridgeInterfaces"
+                                                                                protocol="crownMSGPACK"
+                                                                                crown-path="interfaces">
+                                                                            </crown-set>
+                                                                            <crown-on property="values"
+                                                                                crown-event="CSK_DeviceNetworkConfig/OnNewStatusBridgeInterfaces"
+                                                                                converter="convertToList">
+                                                                            </crown-on>
+                                                                        </davinci-multi-select>
+                                                                        <davinci-text-field id="TF_BridgeGateway"
+                                                                            type="text" label="Bridge gateway"
+                                                                            title="Gateway to use for bridge.">
+                                                                            <crown-on property="value"
+                                                                                crown-event="CSK_DeviceNetworkConfig/OnNewStatusBridgeGateway">
+                                                                            </crown-on>
+                                                                            <crown-set event="change"
+                                                                                crown-function="CSK_DeviceNetworkConfig/setBridgeGateway"
+                                                                                protocol="crownMSGPACK"
+                                                                                crown-path="gateway">
+                                                                            </crown-set>
+                                                                        </davinci-text-field>
                                                                     </layout-column>
                                                                 </layout-row>
                                                                 <layout-row id="RowLayout29"
@@ -533,7 +517,7 @@
                                                                         style="align-items: stretch">
                                                                         <davinci-value-display id="VD_BridgeTestTime"
                                                                             title="Time in minutes after the bridge should be deactivated. This helps to test a setup."
-                                                                            value="Stop bridge after:">
+                                                                            value="Stop bridge after [minutes]:">
                                                                         </davinci-value-display>
                                                                     </layout-column>
                                                                     <layout-column id="ColumnLayout27"
@@ -541,74 +525,115 @@
                                                                         <davinci-numeric-field id="NF_BridgeTest"
                                                                             type="outline" min="0" max="10" ticks="1"
                                                                             group-separator="," decimal-separator="."
-                                                                            format-pattern="0" unit="minutes">
-                                                                            <crown-edpws-binding property="value"
-                                                                                name="CSK_DeviceNetworkConfig/OnNewStatusBridgeTestTime"
-                                                                                update-on-resume>
-                                                                            </crown-edpws-binding>
-                                                                            <crown-binding event="change"
-                                                                                name="CSK_DeviceNetworkConfig/setBridgeTestTime"
-                                                                                path="param/args/time" auto-commit>
-                                                                            </crown-binding>
+                                                                            format-pattern="0">
+                                                                            <crown-on property="value"
+                                                                                crown-event="CSK_DeviceNetworkConfig/OnNewStatusBridgeTestTime">
+                                                                            </crown-on>
+                                                                            <crown-set event="change"
+                                                                                crown-function="CSK_DeviceNetworkConfig/setBridgeTestTime"
+                                                                                protocol="crownMSGPACK"
+                                                                                crown-path="time">
+                                                                            </crown-set>
                                                                         </davinci-numeric-field>
                                                                     </layout-column>
                                                                 </layout-row>
-                                                                <layout-row id="RowLayout32"
-                                                                    style="align-items: center">
-                                                                    <layout-column id="ColumnLayout28"
-                                                                        style="align-items: stretch">
-                                                                        <davinci-value-display id="VD_BridgeBootTime"
-                                                                            title="Time in seconds to wait before activating the bridge after a restart."
-                                                                            value="Delay:">
-                                                                        </davinci-value-display>
-                                                                    </layout-column>
-                                                                    <layout-column id="ColumnLayout29"
-                                                                        style="align-items: stretch">
-                                                                        <davinci-numeric-field id="NF_BridgeDelay"
-                                                                            type="outline" min="0" max="10000" ticks="1"
-                                                                            group-separator="," decimal-separator="."
-                                                                            format-pattern="0" unit="seconds">
-                                                                            <crown-edpws-binding property="value"
-                                                                                name="CSK_DeviceNetworkConfig/OnNewStatusBridgeDelay"
-                                                                                update-on-resume>
-                                                                            </crown-edpws-binding>
-                                                                            <crown-binding event="change"
-                                                                                name="CSK_DeviceNetworkConfig/setBridgeDelay"
-                                                                                path="param/args/delay" auto-commit>
-                                                                            </crown-binding>
-                                                                        </davinci-numeric-field>
-                                                                    </layout-column>
-                                                                </layout-row>
+                                                                <stacked-view id="SV_CC_Bridge">
+                                                                    <stacked-pane id="SP_IsNoCCBridge" value="false">
+                                                                        <layout-row id="RowLayout32"
+                                                                            style="align-items: center">
+                                                                            <layout-column id="ColumnLayout28"
+                                                                                style="align-items: stretch">
+                                                                                <davinci-value-display
+                                                                                    id="VD_BridgeBootTime"
+                                                                                    title="Time in seconds to wait before activating the bridge after a restart."
+                                                                                    value="Delay:">
+                                                                                </davinci-value-display>
+                                                                            </layout-column>
+                                                                            <layout-column id="ColumnLayout29"
+                                                                                style="align-items: stretch">
+                                                                                <davinci-numeric-field
+                                                                                    id="NF_BridgeDelay" type="outline"
+                                                                                    min="0" max="10000" ticks="1"
+                                                                                    group-separator=","
+                                                                                    decimal-separator="."
+                                                                                    format-pattern="0" unit="seconds">
+                                                                                    <crown-on property="value"
+                                                                                        crown-event="CSK_DeviceNetworkConfig/OnNewStatusBridgeDelay">
+                                                                                    </crown-on>
+                                                                                    <crown-set event="change"
+                                                                                        crown-function="CSK_DeviceNetworkConfig/setBridgeDelay"
+                                                                                        protocol="crownMSGPACK"
+                                                                                        crown-path="delay">
+                                                                                    </crown-set>
+                                                                                </davinci-numeric-field>
+                                                                            </layout-column>
+                                                                        </layout-row>
+                                                                    </stacked-pane>
+                                                                    <stacked-pane id="SP_IsCCBridge" value="true">
+                                                                    </stacked-pane>
+                                                                    <crown-on property="value"
+                                                                        crown-event="CSK_DeviceNetworkConfig/OnNewStatusIsCCBridge"
+                                                                        converter="function(value) {return value.toString();}">
+                                                                    </crown-on>
+                                                                </stacked-view>
                                                                 <layout-row id="RowLayout35"
-                                                                    style="justify-content: flex-end">
+                                                                    style="justify-content: space-between; align-items: center">
+                                                                    <davinci-status-indicator id="SI_BridgeActive">
+                                                                        <span>Bridge active</span>
+                                                                        <crown-on property="status"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnNewStatusBridgeActive">
+                                                                        </crown-on>
+                                                                    </davinci-status-indicator>
                                                                     <davinci-button id="Button_SaveBridge"
                                                                         class="myCustomButton_CSK_Module_DeviceNetworkConfig"
-                                                                        type="outline">
+                                                                        type="outline" icon-position="append"
+                                                                        title="Apply bridge setup">
                                                                         <davinci-icon icon="content/save">
                                                                         </davinci-icon>
                                                                         <span></span>
-                                                                        <crown-binding event="submit"
-                                                                            name="CSK_DeviceNetworkConfig/sendParameters"
-                                                                            path="param/args/noDataSave" auto-commit>
-                                                                        </crown-binding>
+                                                                        <crown-set event="submit"
+                                                                            crown-function="CSK_DeviceNetworkConfig/applyBridgeSetup"
+                                                                            protocol="crownMSGPACK">
+                                                                        </crown-set>
+                                                                        <crown-on property="disabled"
+                                                                            crown-event="CSK_DeviceNetworkConfig/OnNewStatusShowBridgeSetupDiffers"
+                                                                            converter="function(value) {return !value;}">
+                                                                        </crown-on>
                                                                     </davinci-button>
                                                                 </layout-row>
+                                                                <stacked-view id="SV_BridgeSetupDiffers">
+                                                                    <stacked-pane id="SP_ShowBridgeDiffers"
+                                                                        value="true">
+                                                                        <davinci-callout id="Callout_BridgeDiffers"
+                                                                            type="info">
+                                                                            <span>
+												Press button to apply new bridge configuration (this will reboot the device).
+												</span>
+                                                                        </davinci-callout>
+                                                                    </stacked-pane>
+                                                                    <stacked-pane id="SP_HideBridgeDiffers"
+                                                                        value="false">
+                                                                    </stacked-pane>
+                                                                    <crown-on property="value"
+                                                                        crown-event="CSK_DeviceNetworkConfig/OnNewStatusShowBridgeSetupDiffers"
+                                                                        converter="function(value) {return value.toString();}">
+                                                                    </crown-on>
+                                                                </stacked-view>
                                                             </layout-column>
                                                         </layout-row>
-                                                    </stacked-pane>
-                                                    <stacked-pane id="SP_BridgeNotActive" value="false">
-                                                    </stacked-pane>
-                                                    <crown-edpws-binding property="value"
-                                                        name="CSK_DeviceNetworkConfig/OnNewStatusShowBridgeFeature"
-                                                        update-on-resume
-                                                        converter="function(value) {return value.toString();}">
-                                                    </crown-edpws-binding>
-                                                </stacked-view>
-                                                <layout-row id="RowLayout34"
-                                                    class="myCustomSpacerVert10_CSK_Module_DeviceNetworkConfig">
+                                                        <layout-row id="RowLayout34"
+                                                            class="myCustomSpacerVert10_CSK_Module_DeviceNetworkConfig">
+                                                        </layout-row>
+                                                    </layout-column>
                                                 </layout-row>
-                                            </layout-column>
-                                        </layout-row>
+                                            </stacked-pane>
+                                            <stacked-pane id="SP_HideBridgeFeature" value="false">
+                                            </stacked-pane>
+                                            <crown-on property="value"
+                                                crown-event="CSK_DeviceNetworkConfig/OnNewStatusShowBridgeFeature"
+                                                converter="function(value) {return value.toString();}">
+                                            </crown-on>
+                                        </stacked-view>
                                     </layout-column>
                                 </layout-row>
                             </layout-column>
@@ -617,15 +642,13 @@
                     <stacked-pane id="SP_LoginNOK" value="false">
                         <layout-row id="RowLayout2">
                             <davinci-callout id="Callout4" type="warning">
-                                <span>
-									Please login with at least user level 'Maintenance' or higher to see this page.
-								</span>
+                                <span>Please login with at least user level 'Maintenance' or higher to see this page.</span>
                             </davinci-callout>
                         </layout-row>
                     </stacked-pane>
-                    <crown-edpws-binding property="value" name="CSK_DeviceNetworkConfig/OnUserLevelMaintenanceActive"
-                        update-on-resume converter="function(value) {return value.toString();}">
-                    </crown-edpws-binding>
+                    <crown-on property="value" crown-event="CSK_DeviceNetworkConfig/OnUserLevelMaintenanceActive"
+                        converter="function(value) {return value.toString();}">
+                    </crown-on>
                 </stacked-view>
             </stacked-pane>
             <stacked-pane id="SP_NoSupport" value="false">
@@ -640,17 +663,17 @@
                     </layout-column>
                 </layout-row>
             </stacked-pane>
-            <crown-edpws-binding property="value" name="CSK_DeviceNetworkConfig/OnNewStatusModuleIsActive"
-                update-on-resume converter="function(value) {return value.toString();}">
-            </crown-edpws-binding>
+            <crown-on property="value" crown-event="CSK_DeviceNetworkConfig/OnNewStatusModuleIsActive"
+                converter="function(value) {return value.toString();}">
+            </crown-on>
         </stacked-view>
         <stacked-view id="SV_pageCalled">
-            <crown-binding property="value" name="CSK_DeviceNetworkConfig/pageCalled" path="result/data/empty"
-                auto-update="0" update-on-resume>
-            </crown-binding>
-            <crown-edpws-binding property="value" name="CSK_DeviceNetworkConfig/OnNewStatusCSKStyle" update-on-resume
+            <crown-get property="value" crown-function="CSK_DeviceNetworkConfig/pageCalled" protocol="crownMSGPACK"
+                crown-path="empty" auto-update-ms="0">
+            </crown-get>
+            <crown-on property="value" crown-event="CSK_DeviceNetworkConfig/OnNewStatusCSKStyle"
                 converter="changeStyle">
-            </crown-edpws-binding>
+            </crown-on>
         </stacked-view>
     </layout-column>
 </layout-row>
